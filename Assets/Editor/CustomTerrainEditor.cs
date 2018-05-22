@@ -32,6 +32,9 @@ public class CustomTerrainEditor : Editor {
             if (GUILayout.Button("Gen Random Heights")) terrain.RandomTerrain();
         }
 
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        if (GUILayout.Button("Reset Terrain")) terrain.ResetTerrain();
+
         serializedObject.ApplyModifiedProperties();
     }
 
