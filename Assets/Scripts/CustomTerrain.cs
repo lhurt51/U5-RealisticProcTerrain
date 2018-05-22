@@ -7,6 +7,13 @@ using System.Linq;
 [ExecuteInEditMode]
 public class CustomTerrain : MonoBehaviour {
 
+    public Vector2 randomHeightRange = new Vector2(0.0f, 0.1f);
+
+    public void RandomTerrain()
+    {
+
+    }
+
     private void Awake()
     {
         SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
