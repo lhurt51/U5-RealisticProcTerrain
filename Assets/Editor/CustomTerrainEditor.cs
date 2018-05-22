@@ -21,6 +21,12 @@ public class CustomTerrainEditor : Editor {
     SerializedProperty perlinOffsetX;
     // The translation from height map to perlin on y-axis
     SerializedProperty perlinOffsetY;
+    // The amount of detail in the perlin map
+    SerializedProperty perlinOctaves;
+    // The amount of consistency in the perlin map
+    SerializedProperty perlinPersistance;
+    // The height scale for the perlin map
+    SerializedProperty perlinHeightScale;
     // The boolean to see if the terrain should reset before generating
     SerializedProperty resetBeforeGen;
 
@@ -42,6 +48,9 @@ public class CustomTerrainEditor : Editor {
         perlinYScale = serializedObject.FindProperty("perlinYScale");
         perlinOffsetX = serializedObject.FindProperty("perlinOffsetX");
         perlinOffsetY = serializedObject.FindProperty("perlinOffsetY");
+        perlinOctaves = serializedObject.FindProperty("perlinOctaves");
+        perlinPersistance = serializedObject.FindProperty("perlinPersistance");
+        perlinHeightScale = serializedObject.FindProperty("perlinHeightScale");
         resetBeforeGen = serializedObject.FindProperty("resetBeforeGen");
     }
 
@@ -86,6 +95,9 @@ public class CustomTerrainEditor : Editor {
             EditorGUILayout.Slider(perlinYScale, 0.0f, 1.0f, new GUIContent("Y Scale"));
             EditorGUILayout.IntSlider(perlinOffsetX, 0, 10000, new GUIContent("X Offset"));
             EditorGUILayout.IntSlider(perlinOffsetY, 0, 10000, new GUIContent("Y Offset"));
+            EditorGUILayout.IntSlider(perlinOctaves, 1, 10, new GUIContent("Octaves"));
+            EditorGUILayout.Slider(perlinPersistance, 0.1f, 10.0f, new GUIContent("Persistance"));
+            EditorGUILayout.Slider(perlinHeightScale, 0.0f, 1.0f, new GUIContent("Perlin Height Scale"));
             if (GUILayout.Button("Gen Perlin Heights"))
             {
                 if (resetBeforeGen.boolValue) terrain.ResetTerrain();
