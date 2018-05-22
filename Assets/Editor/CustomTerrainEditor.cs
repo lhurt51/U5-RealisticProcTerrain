@@ -6,15 +6,26 @@ using EditorGUITable;
 [CanEditMultipleObjects]
 public class CustomTerrainEditor : Editor {
 
+    // Properties ---------
+    // The height range used for the rand gen
     SerializedProperty randomHeightRange;
+    // The height map scale used for gen
+    SerializedProperty heightMapScale;
+    // The height map image used for gen
+    SerializedProperty heightMapImage;
 
+    // Fold outs ----------
     // Fold out for the random hieght generation properties
     bool showRandom = false;
+    // Flod out for the image import for heights
+    bool showLoadHeights = false;
 
     // To allow us to recompile in editor without playing
     void OnEnable()
     {
         randomHeightRange = serializedObject.FindProperty("randomHeightRange");
+        heightMapScale = serializedObject.FindProperty("heightMapScale");
+        heightMapImage = serializedObject.FindProperty("heightMapImage");
     }
 
     public override void OnInspectorGUI()
@@ -30,6 +41,16 @@ public class CustomTerrainEditor : Editor {
             GUILayout.Label("Set Terrain Height Randomly Between Two Values", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(randomHeightRange);
             if (GUILayout.Button("Gen Random Heights")) terrain.RandomTerrain();
+        }
+
+        showLoadHeights = EditorGUILayout.Foldout(showLoadHeights, "ImageGenProps");
+        if (showLoadHeights)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Load Heights From Texture", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(heightMapImage);
+            EditorGUILayout.PropertyField(heightMapScale);
+            if (GUILayout.Button("Load Texture")) terrain.LoadTexture();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);

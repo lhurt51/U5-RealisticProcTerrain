@@ -8,6 +8,9 @@ using System.Linq;
 public class CustomTerrain : MonoBehaviour {
 
     public Vector2 randomHeightRange = new Vector2(0.0f, 0.1f);
+    public Texture2D heightMapImage;
+    public Vector3 heightMapScale = new Vector3(1.0f, 1.0f, 1.0f);
+
     public Terrain terrain;
     public TerrainData terrainData;
 
@@ -22,6 +25,22 @@ public class CustomTerrain : MonoBehaviour {
                 heightMap[x, y] += UnityEngine.Random.Range(randomHeightRange.x, randomHeightRange.y);
             }
         }
+        // Applying the height map to the terrain at position (0, 0)
+        terrainData.SetHeights(0, 0, heightMap);
+    }
+
+    public void LoadTexture()
+    {
+        float[,] heightMap = new float[terrainData.heightmapWidth, terrainData.heightmapHeight];
+
+        for (int x = 0; x < terrainData.heightmapWidth; x++)
+        {
+            for (int z = 0; z < terrainData.heightmapHeight; z++)
+            {
+                heightMap[x, z] = heightMapImage.GetPixel((int)(x * heightMapScale.x), (int)(z * heightMapScale.z)).grayscale * heightMapScale.y;
+            }
+        }
+        // Applying the height map to the terrain at position (0, 0)
         terrainData.SetHeights(0, 0, heightMap);
     }
 
@@ -36,13 +55,16 @@ public class CustomTerrain : MonoBehaviour {
                 heightMap[x, y] = 0.0f;
             }
         }
+        // Applying the height map to the terrain at position (0, 0)
         terrainData.SetHeights(0, 0, heightMap);
     }
 
     private void OnEnable()
     {
         Debug.Log("Initialising Terrain Data");
+        // Grabing the terrain component from the attached object
         terrain = this.GetComponent<Terrain>();
+        // Setting our terrain data tot the terrain components terrain data
         terrainData = Terrain.activeTerrain.terrainData;
     }
 
