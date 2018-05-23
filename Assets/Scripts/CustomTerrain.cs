@@ -188,6 +188,46 @@ public class CustomTerrain : MonoBehaviour {
         terrainData.SetHeights(0, 0, heightMap);
     }
 
+    public void MPD()
+    {
+        float[,] heightMap = GetHeightMap();
+        int width = terrainData.heightmapWidth - 1;
+        int squareSize = width;
+        float height = (float)squareSize / 2.0f * 0.01f;
+        float roughness = 2.0f;
+        float heightDampener = (float)Mathf.Pow(2, -1 * roughness);
+
+        int cornerX, cornerY;
+        int midX, midY;
+        int pmidXL, pmidXR, pmidYU, pmidYD;
+
+        heightMap[0, 0] = UnityEngine.Random.Range(0.0f, 0.2f);
+        heightMap[0, terrainData.heightmapHeight - 2] = UnityEngine.Random.Range(0.0f, 0.2f);
+        heightMap[terrainData.heightmapWidth - 2, 0] = UnityEngine.Random.Range(0.0f, 0.2f);
+        heightMap[terrainData.heightmapWidth - 2, terrainData.heightmapHeight - 2] = UnityEngine.Random.Range(0.0f, 0.2f);
+
+        while (squareSize > 0.0f)
+        {
+            for (int x = 0; x < width; x += squareSize)
+            {
+                for (int y = 0; y < width; y += squareSize)
+                {
+                    cornerX = (x + squareSize);
+                    cornerY = (y + squareSize);
+
+                    midX = (int)(x + squareSize / 2.0f);
+                    midY = (int)(y + squareSize / 2.0f);
+
+                    heightMap[midX, midY] = (float)((heightMap[x, y] + heightMap[cornerX, y] + heightMap[x, cornerY] + heightMap[cornerX, cornerY]) / 4.0f + UnityEngine.Random.Range(-height, height));
+                }
+            }
+            squareSize = (int)(squareSize / 2.0f);
+            height *= heightDampener;
+        }
+
+        terrainData.SetHeights(0, 0, heightMap);
+    }
+
     public void ResetTerrain()
     {
         float[,] heightMap = new float[terrainData.heightmapWidth, terrainData.heightmapHeight];

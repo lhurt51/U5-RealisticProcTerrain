@@ -57,6 +57,8 @@ public class CustomTerrainEditor : Editor {
     bool showMultiPerlin = false;
     // Fold out for the voronoi noise generator
     bool showVoronoi = false;
+    // Fold out for midpoint displacement algo
+    bool showMPD = false;
 
     // To allow us to recompile in editor without playing
     void OnEnable()
@@ -156,6 +158,16 @@ public class CustomTerrainEditor : Editor {
             EditorGUILayout.Slider(voronoiDropOff, 0.0f, 10.0f, new GUIContent("Drop Off"));
             EditorGUILayout.PropertyField(voronoiType);
             if (GUILayout.Button("Gen Voronoi Heights")) terrain.Voronoi();
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        showMPD = EditorGUILayout.Foldout(showMPD, "MPDGenProps");
+        if (showMPD)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Smooth The Terrain Base On MPD ", EditorStyles.boldLabel);
+
+            if (GUILayout.Button("MPD")) terrain.MPD();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
