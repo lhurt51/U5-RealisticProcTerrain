@@ -6,8 +6,10 @@ using System.Linq;
 
 [ExecuteInEditMode]
 public class CustomTerrain : MonoBehaviour {
-
+    // Random Generation --------------------------------------------
     public Vector2 randomHeightRange = new Vector2(0.0f, 0.1f);
+
+    // Texture Loading ----------------------------------------------
     public Texture2D heightMapImage;
     public Vector3 heightMapScale = new Vector3(1.0f, 1.0f, 1.0f);
 
@@ -20,15 +22,41 @@ public class CustomTerrain : MonoBehaviour {
     public float perlinPersistance = 8.0f;
     public float perlinHeightScale = 0.09f;
 
+    // Multiple perlin ---------------------------------------------
+    [System.Serializable]
+    public class PerlinParameters
+    {
+        public float mPerlinXScale = 0.01f;
+        public float mPerlinYScale = 0.01f;
+        public int mPerlinOffsetX = 0;
+        public int mPerlinOffsetY = 0;
+        public int mPerlinOctaves = 3;
+        public float mPerlinPersistance = 8.0f;
+        public float mPerlinHeightScale = 0.09f;
+        public bool remove = false;
+    }
+
+    public List<PerlinParameters> perlinParameters = new List<PerlinParameters>()
+    {
+        new PerlinParameters()
+    };
+
+    // Acess to terrain data ---------------------------------------
     public Terrain terrain;
     public TerrainData terrainData;
 
     // Should it reset the terrain before generating a new height map
     public bool resetBeforeGen;
 
+    float[,] GetHeightMap()
+    {
+        if (!resetBeforeGen) return terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
+        else return new float[terrainData.heightmapWidth, terrainData.heightmapHeight];
+    }
+
     public void Perlin()
     {
-        float[,] heightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
+        float[,] heightMap = GetHeightMap();
 
         for (int x = 0; x < terrainData.heightmapWidth; x++)
         {
@@ -41,9 +69,48 @@ public class CustomTerrain : MonoBehaviour {
         terrainData.SetHeights(0, 0, heightMap);
     }
 
+    public void MultiplePerlinTerrain()
+    {
+        float[,] heightMap = GetHeightMap();
+
+        for (int y = 0; y < terrainData.heightmapHeight; y++)
+        {
+            for (int x = 0; x < terrainData.heightmapWidth; x++)
+            {
+                foreach (PerlinParameters p in perlinParameters)
+                {
+                    heightMap[x, y] += Utils.fBM((x + p.mPerlinOffsetX) * p.mPerlinXScale, (y + p.mPerlinOffsetY) * p.mPerlinYScale, p.mPerlinOctaves, p.mPerlinPersistance) * p.mPerlinHeightScale;
+                }
+            }
+        }
+        terrainData.SetHeights(0, 0, heightMap);
+    }
+
+    public void AddNewPerlin()
+    {
+        perlinParameters.Add(new PerlinParameters());
+    }
+
+    public void RemovePerlin()
+    {
+        List<PerlinParameters> keptPerlinParameters = new List<PerlinParameters>();
+
+        for (int i = 0; i < perlinParameters.Count; i++)
+        {
+            if (!perlinParameters[i].remove)
+            {
+                keptPerlinParameters.Add(perlinParameters[i]);
+            }
+        }
+
+        // If there is nothing in the list. Add the first perlin parameter back to the list
+        if (keptPerlinParameters.Count == 0) keptPerlinParameters.Add(perlinParameters[0]);
+        perlinParameters = keptPerlinParameters;
+    }
+
     public void RandomTerrain()
     {
-        float[,] heightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
+        float[,] heightMap = GetHeightMap();
 
         for (int x = 0; x < terrainData.heightmapWidth; x++)
         {
@@ -58,13 +125,13 @@ public class CustomTerrain : MonoBehaviour {
 
     public void LoadTexture()
     {
-        float[,] heightMap = new float[terrainData.heightmapWidth, terrainData.heightmapHeight];
+        float[,] heightMap = GetHeightMap();
 
         for (int x = 0; x < terrainData.heightmapWidth; x++)
         {
             for (int z = 0; z < terrainData.heightmapHeight; z++)
             {
-                heightMap[x, z] = heightMapImage.GetPixel((int)(x * heightMapScale.x), (int)(z * heightMapScale.z)).grayscale * heightMapScale.y;
+                heightMap[x, z] += heightMapImage.GetPixel((int)(x * heightMapScale.x), (int)(z * heightMapScale.z)).grayscale * heightMapScale.y;
             }
         }
         // Applying the height map to the terrain at position (0, 0)

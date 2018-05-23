@@ -29,6 +29,10 @@ public class CustomTerrainEditor : Editor {
     SerializedProperty perlinHeightScale;
     // The boolean to see if the terrain should reset before generating
     SerializedProperty resetBeforeGen;
+    // The table for our perlin paramters to display the parameters
+    GUITableState perlinParameterTable;
+    // The perlin parameters list that we want to display
+    SerializedProperty perlinParameters;
 
     // Fold outs ------------
     // Fold out for the random hieght generation properties
@@ -37,6 +41,8 @@ public class CustomTerrainEditor : Editor {
     bool showLoadHeights = false;
     // Fold out for the perlin noise generation
     bool showPerlin = false;
+    // Fold out for the multiple perlin noise generator
+    bool showMultiPerlin = false;
 
     // To allow us to recompile in editor without playing
     void OnEnable()
@@ -52,6 +58,8 @@ public class CustomTerrainEditor : Editor {
         perlinPersistance = serializedObject.FindProperty("perlinPersistance");
         perlinHeightScale = serializedObject.FindProperty("perlinHeightScale");
         resetBeforeGen = serializedObject.FindProperty("resetBeforeGen");
+        perlinParameterTable = new GUITableState("perlinParameterTable");
+        perlinParameters = serializedObject.FindProperty("perlinParameters");
     }
 
     public override void OnInspectorGUI()
@@ -65,13 +73,9 @@ public class CustomTerrainEditor : Editor {
         if (showRandom)
         {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-            GUILayout.Label("Set Terrain Height Randomly Between Two Values", EditorStyles.boldLabel);
+            GUILayout.Label("Set Height Randomly Between Two Values", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(randomHeightRange);
-            if (GUILayout.Button("Gen Random Heights"))
-            {
-                if (resetBeforeGen.boolValue) terrain.ResetTerrain();
-                terrain.RandomTerrain();
-            }
+            if (GUILayout.Button("Gen Random Heights")) terrain.RandomTerrain();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -79,7 +83,7 @@ public class CustomTerrainEditor : Editor {
         if (showLoadHeights)
         {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-            GUILayout.Label("Load Terrain Height From Texture", EditorStyles.boldLabel);
+            GUILayout.Label("Load Height From Texture", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(heightMapImage);
             EditorGUILayout.PropertyField(heightMapScale);
             if (GUILayout.Button("Load Texture Heights")) terrain.LoadTexture();
@@ -90,7 +94,7 @@ public class CustomTerrainEditor : Editor {
         if (showPerlin)
         {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-            GUILayout.Label("Set Terrain Height Based On Perlin Noise", EditorStyles.boldLabel);
+            GUILayout.Label("Set Height Based On Perlin Noise", EditorStyles.boldLabel);
             EditorGUILayout.Slider(perlinXScale, 0.0f, 1.0f, new GUIContent("X Scale"));
             EditorGUILayout.Slider(perlinYScale, 0.0f, 1.0f, new GUIContent("Y Scale"));
             EditorGUILayout.IntSlider(perlinOffsetX, 0, 10000, new GUIContent("X Offset"));
@@ -98,11 +102,24 @@ public class CustomTerrainEditor : Editor {
             EditorGUILayout.IntSlider(perlinOctaves, 1, 10, new GUIContent("Octaves"));
             EditorGUILayout.Slider(perlinPersistance, 0.1f, 10.0f, new GUIContent("Persistance"));
             EditorGUILayout.Slider(perlinHeightScale, 0.0f, 1.0f, new GUIContent("Perlin Height Scale"));
-            if (GUILayout.Button("Gen Perlin Heights"))
-            {
-                if (resetBeforeGen.boolValue) terrain.ResetTerrain();
-                terrain.Perlin();
-            }
+            if (GUILayout.Button("Gen Perlin Heights")) terrain.Perlin();
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        showMultiPerlin = EditorGUILayout.Foldout(showMultiPerlin, "MultiPerlinGenProps");
+        if (showMultiPerlin)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Set Height Based On Multiple Perlin Noise", EditorStyles.boldLabel);
+            perlinParameterTable = GUITableLayout.DrawTable(perlinParameterTable, serializedObject.FindProperty("perlinParameters"));
+
+            GUILayout.Space(20);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("+")) terrain.AddNewPerlin();
+            if (GUILayout.Button("-")) terrain.RemovePerlin();
+            EditorGUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Gen Multi Perlin Heights")) terrain.MultiplePerlinTerrain();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -112,14 +129,4 @@ public class CustomTerrainEditor : Editor {
 
         serializedObject.ApplyModifiedProperties();
     }
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
