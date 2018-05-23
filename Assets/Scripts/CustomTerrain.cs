@@ -138,6 +138,36 @@ public class CustomTerrain : MonoBehaviour {
         terrainData.SetHeights(0, 0, heightMap);
     }
 
+    public void Voronoi()
+    {
+        float[,] heightMap = GetHeightMap();
+        // How steep the slope is
+        float fallOff = 2.0f;
+        // Defining where the peak is
+        Vector3 peak = new Vector3(256.0f, 0.2f, 256.0f);
+        // Vector3 peak = new Vector3(UnityEngine.Random.Range(0.0f, terrainData.heightmapWidth), UnityEngine.Random.Range(0.0f, 1.0f), UnityEngine.Random.Range(0.0f, terrainData.heightmapHeight));
+        Vector2 peakLoc = new Vector2(peak.x, peak.z);
+        // Finding max distance for averaging distances
+        float maxDist = Vector2.Distance(new Vector2(0, 0), new Vector2(terrainData.heightmapWidth, terrainData.heightmapHeight));
+
+        // Setting the height maps peak
+        heightMap[(int)peak.x, (int)peak.z] = peak.y;
+        for (int y = 0; y < terrainData.heightmapHeight; y++)
+        {
+            for (int x = 0; x < terrainData.heightmapWidth; x++)
+            {
+                // Making sure we skip the peak
+                if (!(x == peak.x && y == peak.z))
+                {
+                    float distToPeak = Vector2.Distance(peakLoc, new Vector2(x, y)) * fallOff;
+                    heightMap[x, y] = peak.y - (distToPeak / maxDist);
+                }
+            }
+        }
+
+        terrainData.SetHeights(0, 0, heightMap);
+    }
+
     public void ResetTerrain()
     {
         float[,] heightMap = new float[terrainData.heightmapWidth, terrainData.heightmapHeight];

@@ -43,6 +43,8 @@ public class CustomTerrainEditor : Editor {
     bool showPerlin = false;
     // Fold out for the multiple perlin noise generator
     bool showMultiPerlin = false;
+    // Fold out for the voronoi noise generator
+    bool showVoronoi = false;
 
     // To allow us to recompile in editor without playing
     void OnEnable()
@@ -120,6 +122,16 @@ public class CustomTerrainEditor : Editor {
             EditorGUILayout.EndHorizontal();
 
             if (GUILayout.Button("Gen Multi Perlin Heights")) terrain.MultiplePerlinTerrain();
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        showVoronoi = EditorGUILayout.Foldout(showVoronoi, "VoronoiGenProps");
+        if (showVoronoi)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Set Height Based On Voronoi Noise", EditorStyles.boldLabel);
+
+            if (GUILayout.Button("Gen Voronoi Heights")) terrain.Voronoi();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
