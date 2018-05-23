@@ -37,6 +37,8 @@ public class CustomTerrainEditor : Editor {
     SerializedProperty voronoiFallOff;
     // The curve of the slope for each mountian
     SerializedProperty voronoiDropOff;
+    // If the voronoi type is Combined, Linear, Power
+    SerializedProperty voronoiType;
     // The boolean to see if the terrain should reset before generating
     SerializedProperty resetBeforeGen;
     // The table for our perlin paramters to display the parameters
@@ -74,6 +76,7 @@ public class CustomTerrainEditor : Editor {
         voronoiMaxHeight = serializedObject.FindProperty("voronoiMaxHeight");
         voronoiFallOff = serializedObject.FindProperty("voronoiFallOff");
         voronoiDropOff = serializedObject.FindProperty("voronoiDropOff");
+        voronoiType = serializedObject.FindProperty("voronoiType");
         resetBeforeGen = serializedObject.FindProperty("resetBeforeGen");
         perlinParameterTable = new GUITableState("perlinParameterTable");
         perlinParameters = serializedObject.FindProperty("perlinParameters");
@@ -151,7 +154,7 @@ public class CustomTerrainEditor : Editor {
             EditorGUILayout.Slider(voronoiMaxHeight, 0.0f, 1.0f, new GUIContent("Max Height"));
             EditorGUILayout.Slider(voronoiFallOff, 0.0f, 10.0f, new GUIContent("Fall Off"));
             EditorGUILayout.Slider(voronoiDropOff, 0.0f, 10.0f, new GUIContent("Drop Off"));
-
+            EditorGUILayout.PropertyField(voronoiType);
             if (GUILayout.Button("Gen Voronoi Heights")) terrain.Voronoi();
         }
 

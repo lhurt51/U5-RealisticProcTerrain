@@ -216,6 +216,12 @@ MonoBehaviour:
     mPerlinPersistance: 8
     mPerlinHeightScale: 0.09
     remove: 0
+  voronoiPeaks: 3
+  voronoiMinHeight: 0.15
+  voronoiMaxHeight: 0.4
+  voronoiFallOff: 10
+  voronoiDropOff: 10
+  voronoiType: 3
   terrain: {fileID: 1076039430}
   terrainData: {fileID: 15600000, guid: 5ee3ddc9c1a6f0b479917dafbd0242b1, type: 2}
   resetBeforeGen: 1

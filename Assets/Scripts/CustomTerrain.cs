@@ -47,6 +47,8 @@ public class CustomTerrain : MonoBehaviour {
     public float voronoiMaxHeight = 1.0f;
     public float voronoiFallOff = 0.2f;
     public float voronoiDropOff = 0.6f;
+    public enum VoronoiType { Linear = 0, Power = 1, Combined = 2, SinPow = 3 }
+    public VoronoiType voronoiType = VoronoiType.Linear;
 
     // Acess to terrain data ---------------------------------------
     public Terrain terrain;
@@ -169,9 +171,14 @@ public class CustomTerrain : MonoBehaviour {
                     if (!(x == peak.x && y == peak.z))
                     {
                         float dstToPeak = Vector2.Distance(peakLoc, new Vector2(x, y)) / maxDist;
-                        float h = peak.y - dstToPeak * voronoiFallOff - Mathf.Pow(dstToPeak, voronoiDropOff);
+                        float h;
+
+                        if (voronoiType == VoronoiType.SinPow) h = peak.y - Mathf.Pow(dstToPeak * 3.0f, voronoiFallOff) - Mathf.Sin(dstToPeak * 2.0f * Mathf.PI) / voronoiDropOff;
+                        else if (voronoiType == VoronoiType.Combined) h = peak.y - dstToPeak * voronoiFallOff - Mathf.Pow(dstToPeak, voronoiDropOff);
+                        else if (voronoiType == VoronoiType.Power) h = peak.y - Mathf.Pow(dstToPeak, voronoiDropOff) * voronoiFallOff;
+                        else h = peak.y - dstToPeak * voronoiFallOff;
                         // Sin wave code....
-                        // float h = peak.y - Mathf.Sin(dstToPeak * 200) * 0.01f;
+                        // h = peak.y - Mathf.Sin(dstToPeak * 200 * Mathf.PI) * 0.01f;
                         if (heightMap[x, y] < h) heightMap[x, y] = h;
                     }
                 }
