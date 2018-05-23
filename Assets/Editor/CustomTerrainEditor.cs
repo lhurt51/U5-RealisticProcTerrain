@@ -39,6 +39,13 @@ public class CustomTerrainEditor : Editor {
     SerializedProperty voronoiDropOff;
     // If the voronoi type is Combined, Linear, Power
     SerializedProperty voronoiType;
+    // The min height the MPD can produce
+    SerializedProperty MPDHeightMin;
+    // The max height the MPD can produce
+    SerializedProperty MPDHeightMax;
+    // The height dampener to reduce height over time
+    SerializedProperty MPDHeightDampenerPower;
+    SerializedProperty MPDRoughness;
     // The boolean to see if the terrain should reset before generating
     SerializedProperty resetBeforeGen;
     // The table for our perlin paramters to display the parameters
@@ -79,6 +86,10 @@ public class CustomTerrainEditor : Editor {
         voronoiFallOff = serializedObject.FindProperty("voronoiFallOff");
         voronoiDropOff = serializedObject.FindProperty("voronoiDropOff");
         voronoiType = serializedObject.FindProperty("voronoiType");
+        MPDHeightMin = serializedObject.FindProperty("MPDHeightMin");
+        MPDHeightMax = serializedObject.FindProperty("MPDHeightMax");
+        MPDHeightDampenerPower = serializedObject.FindProperty("MPDHeightDampenerPower");
+        MPDRoughness = serializedObject.FindProperty("MPDRoughness");
         resetBeforeGen = serializedObject.FindProperty("resetBeforeGen");
         perlinParameterTable = new GUITableState("perlinParameterTable");
         perlinParameters = serializedObject.FindProperty("perlinParameters");
@@ -166,7 +177,10 @@ public class CustomTerrainEditor : Editor {
         {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             GUILayout.Label("Smooth The Terrain Base On MPD ", EditorStyles.boldLabel);
-
+            EditorGUILayout.PropertyField(MPDHeightMin);
+            EditorGUILayout.PropertyField(MPDHeightMax);
+            EditorGUILayout.PropertyField(MPDHeightDampenerPower);
+            EditorGUILayout.PropertyField(MPDRoughness);
             if (GUILayout.Button("MPD")) terrain.MPD();
         }
 
