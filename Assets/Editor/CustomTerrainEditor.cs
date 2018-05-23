@@ -27,6 +27,16 @@ public class CustomTerrainEditor : Editor {
     SerializedProperty perlinPersistance;
     // The height scale for the perlin map
     SerializedProperty perlinHeightScale;
+    // The count for how many peak will be generated
+    SerializedProperty voronoiPeaks;
+    // The min height for each voronoi peak
+    SerializedProperty voronoiMinHeight;
+    // The max height for each voronoi peak
+    SerializedProperty voronoiMaxHeight;
+    // The steepness of the slope for each mountian
+    SerializedProperty voronoiFallOff;
+    // The curve of the slope for each mountian
+    SerializedProperty voronoiDropOff;
     // The boolean to see if the terrain should reset before generating
     SerializedProperty resetBeforeGen;
     // The table for our perlin paramters to display the parameters
@@ -59,6 +69,11 @@ public class CustomTerrainEditor : Editor {
         perlinOctaves = serializedObject.FindProperty("perlinOctaves");
         perlinPersistance = serializedObject.FindProperty("perlinPersistance");
         perlinHeightScale = serializedObject.FindProperty("perlinHeightScale");
+        voronoiPeaks = serializedObject.FindProperty("voronoiPeaks");
+        voronoiMinHeight = serializedObject.FindProperty("voronoiMinHeight");
+        voronoiMaxHeight = serializedObject.FindProperty("voronoiMaxHeight");
+        voronoiFallOff = serializedObject.FindProperty("voronoiFallOff");
+        voronoiDropOff = serializedObject.FindProperty("voronoiDropOff");
         resetBeforeGen = serializedObject.FindProperty("resetBeforeGen");
         perlinParameterTable = new GUITableState("perlinParameterTable");
         perlinParameters = serializedObject.FindProperty("perlinParameters");
@@ -130,6 +145,12 @@ public class CustomTerrainEditor : Editor {
         {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             GUILayout.Label("Set Height Based On Voronoi Noise", EditorStyles.boldLabel);
+
+            EditorGUILayout.IntSlider(voronoiPeaks, 1, 10, new GUIContent("Peaks"));
+            EditorGUILayout.Slider(voronoiMinHeight, 0.0f, 1.0f, new GUIContent("Min Height"));
+            EditorGUILayout.Slider(voronoiMaxHeight, 0.0f, 1.0f, new GUIContent("Max Height"));
+            EditorGUILayout.Slider(voronoiFallOff, 0.0f, 10.0f, new GUIContent("Fall Off"));
+            EditorGUILayout.Slider(voronoiDropOff, 0.0f, 10.0f, new GUIContent("Drop Off"));
 
             if (GUILayout.Button("Gen Voronoi Heights")) terrain.Voronoi();
         }
