@@ -142,7 +142,8 @@ public class CustomTerrain : MonoBehaviour {
     {
         float[,] heightMap = GetHeightMap();
         // How steep the slope is
-        float fallOff = 2.0f;
+        float fallOff = 0.6f;
+        float dropOff = 0.8f;
         // Defining where the peak is
         Vector3 peak = new Vector3(256.0f, 0.2f, 256.0f);
         // Vector3 peak = new Vector3(UnityEngine.Random.Range(0.0f, terrainData.heightmapWidth), UnityEngine.Random.Range(0.0f, 1.0f), UnityEngine.Random.Range(0.0f, terrainData.heightmapHeight));
@@ -159,8 +160,11 @@ public class CustomTerrain : MonoBehaviour {
                 // Making sure we skip the peak
                 if (!(x == peak.x && y == peak.z))
                 {
-                    float distToPeak = Vector2.Distance(peakLoc, new Vector2(x, y)) * fallOff;
-                    heightMap[x, y] = peak.y - (distToPeak / maxDist);
+                    float dstToPeak = Vector2.Distance(peakLoc, new Vector2(x, y)) / maxDist;
+                    float h = peak.y - dstToPeak * fallOff - Mathf.Pow(dstToPeak, dropOff);
+                    // Sin wave code....
+                    // float h = peak.y - Mathf.Sin(dstToPeak * 200) * 0.01f;
+                    heightMap[x, y] = h;
                 }
             }
         }
