@@ -29,7 +29,25 @@ public class TextureCreatorWindow : EditorWindow {
         {
             for (int x = 0; x < w; x++)
             {
-                pValue = Utils.fBM((x + perlinOffsetX) * perlinXScale, (y + PerlinOffsetY) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
+                if (seamlessToggle)
+                {
+                    float u = (float)x / (float)w;
+                    float v = (float)y / (float)h;
+                    float noise00 = Utils.fBM((x + perlinOffsetX) * perlinXScale, (y + PerlinOffsetY) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
+                    float noise01 = Utils.fBM((x + perlinOffsetX) * perlinXScale, (y + PerlinOffsetY + h) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
+                    float noise10 = Utils.fBM((x + perlinOffsetX + w) * perlinXScale, (y + PerlinOffsetY) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
+                    float noise11 = Utils.fBM((x + perlinOffsetX + w) * perlinXScale, (y + PerlinOffsetY + h) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
+                    float noiseTotal = u * v * noise01 + u * (1 - v) * noise01 + (1 - u) * v * noise10 + (1 - u) * (1 - v) * noise11;
+                    float value = (int)(256 * noiseTotal) + 50;
+                    float r = Mathf.Clamp((int)noise00, 0, 255);
+                    float g = Mathf.Clamp(value, 0, 255);
+                    float b = Mathf.Clamp(value + 50, 0, 255);
+                    float a = Mathf.Clamp(value + 100, 0, 255);
+
+                    pValue = (r + g + b) / (3.0f * 255.0f);
+                }
+                else pValue = Utils.fBM((x + perlinOffsetX) * perlinXScale, (y + PerlinOffsetY) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
+
                 float colValue = pValue;
                 pixColor = new Color(colValue, colValue, colValue, alphaToggle ? colValue : 1.0f);
                 pTexture.SetPixel(x, y, pixColor);
