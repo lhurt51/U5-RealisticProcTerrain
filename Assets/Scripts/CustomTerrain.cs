@@ -83,7 +83,7 @@ public class CustomTerrain : MonoBehaviour {
     // Should it reset the terrain before generating a new height map
     public bool resetBeforeGen;
 
-    // Class Methods -----------------------------------------------
+    // Private Class Methods ----------------------------------------
     private void AddTag(SerializedProperty tagsProp, string newTag)
     {
         bool found = false;
@@ -135,6 +135,15 @@ public class CustomTerrain : MonoBehaviour {
         else return new float[terrainData.heightmapWidth, terrainData.heightmapHeight];
     }
 
+    private void NormalizeVector(float[] v)
+    {
+        float total = 0;
+
+        for (int i = 0; i < v.Length; i++) total += v[i];
+
+        for (int i = 0; i < v.Length; i++) v[i] /= total;
+    }
+
     private List<Vector2> GenerateNeighbours(Vector2 pos, int width, int height)
     {
         List<Vector2> neighbours = new List<Vector2>();
@@ -154,6 +163,7 @@ public class CustomTerrain : MonoBehaviour {
         return neighbours;
     }
 
+    // Public Class Methods ------------------------------------------
     public void RandomTerrain()
     {
         float[,] heightMap = GetHeightMap();
@@ -408,6 +418,28 @@ public class CustomTerrain : MonoBehaviour {
             spindex++;
         }
         terrainData.splatPrototypes = newSplatProto;
+
+        float[,] heightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
+        float[,,] splatMapData = new float[terrainData.alphamapWidth, terrainData.alphamapHeight, terrainData.alphamapLayers];
+
+        for (int y = 0; y < terrainData.alphamapHeight; y++)
+        {
+            for (int x = 0; x < terrainData.alphamapWidth; x++)
+            {
+                float[] splat = new float[terrainData.alphamapLayers];
+
+                for (int i = 0; i < splatHeights.Count; i++)
+                {
+                    float thisHeightStart = splatHeights[i].minHeight;
+                    float thisHeightStop = splatHeights[i].maxHeight;
+
+                    if ((heightMap[x, y] >= thisHeightStart && heightMap[x, y] <= thisHeightStop)) splat[i] = 1;
+                }
+                NormalizeVector(splat);
+                for (int j = 0; j < splatHeights.Count; j++) splatMapData[x, y, j] = splat[j];
+            }
+        }
+        terrainData.SetAlphamaps(0, 0, splatMapData);
     }
 
     public void ResetTerrain()
