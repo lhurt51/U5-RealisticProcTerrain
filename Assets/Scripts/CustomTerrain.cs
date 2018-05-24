@@ -67,8 +67,10 @@ public class CustomTerrain : MonoBehaviour {
         public Texture2D texture = null;
         public float minHeight = 0.1f;
         public float maxHeight = 0.2f;
-        public Vector2 tileOffset = new Vector2(0, 0);
-        public Vector2 tileSize = new Vector2(50, 50);
+        public float minSlope = 0.0f;
+        public float maxSlope = 90.0f;
+        public Vector2 tileOffset = new Vector2(0.0f, 0.0f);
+        public Vector2 tileSize = new Vector2(50.0f, 50.0f);
         public float splatBlendOffset = 0.01f;
         public Vector2 splatNoiseVScale = new Vector2(0.01f, 0.01f);
         public float splatNoiseScaler = 0.1f;
@@ -164,6 +166,25 @@ public class CustomTerrain : MonoBehaviour {
             }
         }
         return neighbours;
+    }
+
+    private float GetSteepness(float[,] heightMap, int x, int y, int width, int height)
+    {
+        float h = heightMap[x, y];
+        int nx = x + 1;
+        int ny = y + 1;
+
+        // If on the upper edge of the map find gradient by going backward
+        if (nx > width - 1) nx = x - 1;
+        if (ny > height - 1) ny = y - 1;
+
+        float dx = heightMap[nx, y] - h;
+        float dy = heightMap[x, ny] - h;
+        Vector2 gradient = new Vector2(dx, dy);
+
+        float steep = gradient.magnitude;
+
+        return steep;
     }
 
     // Public Class Methods ------------------------------------------
@@ -437,8 +458,11 @@ public class CustomTerrain : MonoBehaviour {
                     float blendOffsetCalc = splatHeights[i].splatBlendOffset + blendNoise;
                     float thisHeightStart = splatHeights[i].minHeight - blendOffsetCalc;
                     float thisHeightStop = splatHeights[i].maxHeight + blendOffsetCalc;
+                    // float steepness = GetSteepness(heightMap, x, y, terrainData.heightmapWidth, terrainData.heightmapHeight);
+                    float steepness = terrainData.GetSteepness(y / (float)terrainData.alphamapHeight, x / (float)terrainData.alphamapWidth);
 
-                    if ((heightMap[x, y] >= thisHeightStart && heightMap[x, y] <= thisHeightStop)) splat[i] = 1;
+                    if ((heightMap[x, y] >= thisHeightStart && heightMap[x, y] <= thisHeightStop) && (steepness >= splatHeights[i].minSlope && steepness <= splatHeights[i].maxSlope))
+                        splat[i] = 1;
                 }
                 NormalizeVector(splat);
                 for (int j = 0; j < splatHeights.Count; j++) splatMapData[x, y, j] = splat[j];
