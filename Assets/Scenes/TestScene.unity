@@ -197,6 +197,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6eb87350d9b3454995212f9facff8e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrain: {fileID: 1076039430}
+  terrainData: {fileID: 15600000, guid: 5ee3ddc9c1a6f0b479917dafbd0242b1, type: 2}
   randomHeightRange: {x: 0, y: 0.01}
   heightMapImage: {fileID: 2800000, guid: 141ca33bc11b68d408fc7cf870d5834d, type: 3}
   heightMapScale: {x: 1.9, y: 0.5, z: 1.9}
@@ -226,9 +228,14 @@ MonoBehaviour:
   MPDHeightMax: 10
   MPDHeightDampenerPower: 2
   MPDRoughness: 2
+  splatHeights:
+  - texture: {fileID: 2800000, guid: 18d06890de62d443ea645cc5adec617e, type: 3}
+    minHeight: 0.1
+    maxHeight: 0.2
+    tileOffset: {x: 0, y: 0}
+    tileSize: {x: 25, y: 25}
+    remove: 0
   smoothAmount: 9
-  terrain: {fileID: 1076039430}
-  terrainData: {fileID: 15600000, guid: 5ee3ddc9c1a6f0b479917dafbd0242b1, type: 2}
   resetBeforeGen: 0
 --- !u!1 &1984429388
 GameObject:

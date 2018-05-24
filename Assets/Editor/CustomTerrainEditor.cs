@@ -54,6 +54,10 @@ public class CustomTerrainEditor : Editor {
     GUITableState perlinParameterTable;
     // The perlin parameters list that we want to display
     SerializedProperty perlinParameters;
+    // The table for our splat heights to display parameters
+    GUITableState splatMapTable;
+    // The splat heights list that we want to display
+    SerializedProperty splatHeights;
 
     // Fold outs ------------
     // Fold out for the random hieght generation properties
@@ -68,6 +72,10 @@ public class CustomTerrainEditor : Editor {
     bool showVoronoi = false;
     // Fold out for midpoint displacement algo
     bool showMPD = false;
+    // Fold out for smoothing algo
+    bool showSmooth = false;
+    // Fold out for splat map generator
+    bool showSplatMap = false;
 
     // To allow us to recompile in editor without playing
     void OnEnable()
@@ -96,6 +104,8 @@ public class CustomTerrainEditor : Editor {
         resetBeforeGen = serializedObject.FindProperty("resetBeforeGen");
         perlinParameterTable = new GUITableState("perlinParameterTable");
         perlinParameters = serializedObject.FindProperty("perlinParameters");
+        splatMapTable = new GUITableState("splatMapTable");
+        splatHeights = serializedObject.FindProperty("splatHeights");
     }
 
     public override void OnInspectorGUI()
@@ -188,8 +198,25 @@ public class CustomTerrainEditor : Editor {
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-        showMPD = EditorGUILayout.Foldout(showMPD, "SmoothProps");
-        if (showMPD)
+        showSplatMap = EditorGUILayout.Foldout(showSplatMap, "SplatMapProps");
+        if (showSplatMap)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Texture The Terrain With Splat Map", EditorStyles.boldLabel);
+            splatMapTable = GUITableLayout.DrawTable(splatMapTable, serializedObject.FindProperty("splatHeights"));
+
+            GUILayout.Space(20);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("+")) terrain.AddNewSplatHeight();
+            if (GUILayout.Button("-")) terrain.RemoveSplatHeight();
+            EditorGUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Apply SplatMap")) terrain.SplatMaps();
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        showSmooth = EditorGUILayout.Foldout(showSmooth, "SmoothProps");
+        if (showSmooth)
         {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             GUILayout.Label("Smooth The Terrain", EditorStyles.boldLabel);

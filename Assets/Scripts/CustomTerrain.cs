@@ -6,6 +6,10 @@ using System.Linq;
 
 [ExecuteInEditMode]
 public class CustomTerrain : MonoBehaviour {
+    // Acess to terrain data ---------------------------------------
+    public Terrain terrain;
+    public TerrainData terrainData;
+
     // Random Generation --------------------------------------------
     public Vector2 randomHeightRange = new Vector2(0.0f, 0.1f);
 
@@ -56,74 +60,98 @@ public class CustomTerrain : MonoBehaviour {
     public float MPDHeightDampenerPower = 2.0f;
     public float MPDRoughness = 2.0f;
 
+    // Splatmaps ---------------------------------------------------
+    [System.Serializable]
+    public class SplatHeights
+    {
+        public Texture2D texture = null;
+        public float minHeight = 0.1f;
+        public float maxHeight = 0.2f;
+        public Vector2 tileOffset = new Vector2(0, 0);
+        public Vector2 tileSize = new Vector2(50, 50);
+        public bool remove = false;
+    }
+
+    public List<SplatHeights> splatHeights = new List<SplatHeights>()
+    {
+        new SplatHeights()
+    };
+
     // Smooth Algo -------------------------------------------------
     public int smoothAmount = 5;
-
-    // Acess to terrain data ---------------------------------------
-    public Terrain terrain;
-    public TerrainData terrainData;
 
     // Should it reset the terrain before generating a new height map
     public bool resetBeforeGen;
 
-    float[,] GetHeightMap()
+    // Class Methods -----------------------------------------------
+    private void AddTag(SerializedProperty tagsProp, string newTag)
+    {
+        bool found = false;
+
+        // Ensure the tag doesn't already exist
+        for (int i = 0; i < tagsProp.arraySize; i++)
+        {
+            SerializedProperty t = tagsProp.GetArrayElementAtIndex(i);
+            if (t.stringValue.Equals(newTag)) { found = true; break; }
+        }
+
+        // Add the new tag
+        if (!found)
+        {
+            tagsProp.InsertArrayElementAtIndex(0);
+            SerializedProperty newTagProp = tagsProp.GetArrayElementAtIndex(0);
+            newTagProp.stringValue = newTag;
+        }
+    }
+
+    private void OnEnable()
+    {
+        Debug.Log("Initialising Terrain Data");
+        // Grabing the terrain component from the attached object
+        terrain = this.GetComponent<Terrain>();
+        // Setting our terrain data tot the terrain components terrain data
+        terrainData = Terrain.activeTerrain.terrainData;
+    }
+
+    private void Awake()
+    {
+        SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+        SerializedProperty tagsProp = tagManager.FindProperty("tags");
+
+        AddTag(tagsProp, "Terrain");
+        AddTag(tagsProp, "Cloud");
+        AddTag(tagsProp, "Shore");
+
+        // Apply tag changes to the tag database
+        tagManager.ApplyModifiedProperties();
+
+        // Take this object
+        this.gameObject.tag = "Terrain";
+    }
+
+    private float[,] GetHeightMap()
     {
         if (!resetBeforeGen) return terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
         else return new float[terrainData.heightmapWidth, terrainData.heightmapHeight];
     }
 
-    public void Perlin()
+    private List<Vector2> GenerateNeighbours(Vector2 pos, int width, int height)
     {
-        float[,] heightMap = GetHeightMap();
+        List<Vector2> neighbours = new List<Vector2>();
 
-        for (int x = 0; x < terrainData.heightmapWidth; x++)
+        for (int y = -1; y < 2; y++)
         {
-            for (int y = 0; y < terrainData.heightmapHeight; y++)
+            for (int x = -1; x < 2; x++)
             {
-                heightMap[x, y] += Utils.fBM((x + perlinOffsetX) * perlinXScale, (y + perlinOffsetY) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
-            }
-        }
-        // Applying the height map to the terrain at position (0, 0)
-        terrainData.SetHeights(0, 0, heightMap);
-    }
-
-    public void MultiplePerlinTerrain()
-    {
-        float[,] heightMap = GetHeightMap();
-
-        for (int y = 0; y < terrainData.heightmapHeight; y++)
-        {
-            for (int x = 0; x < terrainData.heightmapWidth; x++)
-            {
-                foreach (PerlinParameters p in perlinParameters)
+                if (!(x == 0 && y == 0))
                 {
-                    heightMap[x, y] += Utils.fBM((x + p.mPerlinOffsetX) * p.mPerlinXScale, (y + p.mPerlinOffsetY) * p.mPerlinYScale, p.mPerlinOctaves, p.mPerlinPersistance) * p.mPerlinHeightScale;
+                    Vector2 nPos = new Vector2(Mathf.Clamp(pos.x + x, 0.0f, width - 1), Mathf.Clamp(pos.y + y, 0.0f, height - 1));
+
+                    if (!neighbours.Contains(nPos)) neighbours.Add(nPos);
                 }
             }
         }
-        terrainData.SetHeights(0, 0, heightMap);
-    }
-
-    public void AddNewPerlin()
-    {
-        perlinParameters.Add(new PerlinParameters());
-    }
-
-    public void RemovePerlin()
-    {
-        List<PerlinParameters> keptPerlinParameters = new List<PerlinParameters>();
-
-        for (int i = 0; i < perlinParameters.Count; i++)
-        {
-            if (!perlinParameters[i].remove)
-            {
-                keptPerlinParameters.Add(perlinParameters[i]);
-            }
-        }
-
-        // If there is nothing in the list. Add the first perlin parameter back to the list
-        if (keptPerlinParameters.Count == 0) keptPerlinParameters.Add(perlinParameters[0]);
-        perlinParameters = keptPerlinParameters;
+        return neighbours;
     }
 
     public void RandomTerrain()
@@ -153,6 +181,60 @@ public class CustomTerrain : MonoBehaviour {
             }
         }
         // Applying the height map to the terrain at position (0, 0)
+        terrainData.SetHeights(0, 0, heightMap);
+    }
+
+    public void Perlin()
+    {
+        float[,] heightMap = GetHeightMap();
+
+        for (int x = 0; x < terrainData.heightmapWidth; x++)
+        {
+            for (int y = 0; y < terrainData.heightmapHeight; y++)
+            {
+                heightMap[x, y] += Utils.fBM((x + perlinOffsetX) * perlinXScale, (y + perlinOffsetY) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
+            }
+        }
+        // Applying the height map to the terrain at position (0, 0)
+        terrainData.SetHeights(0, 0, heightMap);
+    }
+
+    public void AddNewPerlin()
+    {
+        perlinParameters.Add(new PerlinParameters());
+    }
+
+    public void RemovePerlin()
+    {
+        List<PerlinParameters> keptPerlinParameters = new List<PerlinParameters>();
+
+        for (int i = 0; i < perlinParameters.Count; i++)
+        {
+            if (!perlinParameters[i].remove)
+            {
+                keptPerlinParameters.Add(perlinParameters[i]);
+            }
+        }
+
+        // If there is nothing in the list. Add the first perlin parameter back to the list
+        if (keptPerlinParameters.Count == 0) keptPerlinParameters.Add(perlinParameters[0]);
+        perlinParameters = keptPerlinParameters;
+    }
+
+    public void MultiplePerlinTerrain()
+    {
+        float[,] heightMap = GetHeightMap();
+
+        for (int y = 0; y < terrainData.heightmapHeight; y++)
+        {
+            for (int x = 0; x < terrainData.heightmapWidth; x++)
+            {
+                foreach (PerlinParameters p in perlinParameters)
+                {
+                    heightMap[x, y] += Utils.fBM((x + p.mPerlinOffsetX) * p.mPerlinXScale, (y + p.mPerlinOffsetY) * p.mPerlinYScale, p.mPerlinOctaves, p.mPerlinPersistance) * p.mPerlinHeightScale;
+                }
+            }
+        }
         terrainData.SetHeights(0, 0, heightMap);
     }
 
@@ -262,25 +344,6 @@ public class CustomTerrain : MonoBehaviour {
         terrainData.SetHeights(0, 0, heightMap);
     }
 
-    private List<Vector2> GenerateNeighbours(Vector2 pos, int width, int height)
-    {
-        List<Vector2> neighbours = new List<Vector2>();
-
-        for (int y = -1; y < 2; y++)
-        {
-            for (int x = -1; x < 2; x++)
-            {
-                if (!(x == 0 && y == 0))
-                {
-                    Vector2 nPos = new Vector2(Mathf.Clamp(pos.x + x, 0.0f, width - 1), Mathf.Clamp(pos.y + y, 0.0f, height - 1));
-
-                    if (!neighbours.Contains(nPos)) neighbours.Add(nPos);
-                }
-            }
-        }
-        return neighbours;
-    }
-
     public void Smooth()
     {
         float[,] heightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
@@ -311,6 +374,42 @@ public class CustomTerrain : MonoBehaviour {
         EditorUtility.ClearProgressBar();
     }
 
+    public void AddNewSplatHeight()
+    {
+        splatHeights.Add(new SplatHeights());
+    }
+
+    public void RemoveSplatHeight()
+    {
+        List<SplatHeights> keptSplatHeights = new List<SplatHeights>();
+
+        for (int i = 0; i < splatHeights.Count; i++)
+        {
+            if (!splatHeights[i].remove) keptSplatHeights.Add(splatHeights[i]);
+        }
+        // Must keep atleast one thing in the array
+        if (keptSplatHeights.Count == 0) keptSplatHeights.Add(splatHeights[0]);
+        splatHeights = keptSplatHeights;
+    }
+
+    public void SplatMaps()
+    {
+        SplatPrototype[] newSplatProto;
+        int spindex = 0;
+
+        newSplatProto = new SplatPrototype[splatHeights.Count];
+        foreach (SplatHeights sh in splatHeights)
+        {
+            newSplatProto[spindex] = new SplatPrototype();
+            newSplatProto[spindex].texture = sh.texture;
+            newSplatProto[spindex].tileOffset = sh.tileOffset;
+            newSplatProto[spindex].tileSize = sh.tileSize;
+            newSplatProto[spindex].texture.Apply(true);
+            spindex++;
+        }
+        terrainData.splatPrototypes = newSplatProto;
+    }
+
     public void ResetTerrain()
     {
         float[,] heightMap = new float[terrainData.heightmapWidth, terrainData.heightmapHeight];
@@ -325,59 +424,4 @@ public class CustomTerrain : MonoBehaviour {
         // Applying the height map to the terrain at position (0, 0)
         terrainData.SetHeights(0, 0, heightMap);
     }
-
-    private void OnEnable()
-    {
-        Debug.Log("Initialising Terrain Data");
-        // Grabing the terrain component from the attached object
-        terrain = this.GetComponent<Terrain>();
-        // Setting our terrain data tot the terrain components terrain data
-        terrainData = Terrain.activeTerrain.terrainData;
-    }
-
-    private void Awake()
-    {
-        SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
-        SerializedProperty tagsProp = tagManager.FindProperty("tags");
-
-        AddTag(tagsProp, "Terrain");
-        AddTag(tagsProp, "Cloud");
-        AddTag(tagsProp, "Shore");
-
-        // Apply tag changes to the tag database
-        tagManager.ApplyModifiedProperties();
-
-        // Take this object
-        this.gameObject.tag = "Terrain";
-    }
-
-    void AddTag(SerializedProperty tagsProp, string newTag)
-    {
-        bool found = false;
-
-        // Ensure the tag doesn't already exist
-        for (int i = 0; i < tagsProp.arraySize; i++)
-        {
-            SerializedProperty t = tagsProp.GetArrayElementAtIndex(i);
-            if (t.stringValue.Equals(newTag)) { found = true; break; }
-        }
-
-        // Add the new tag
-        if (!found)
-        {
-            tagsProp.InsertArrayElementAtIndex(0);
-            SerializedProperty newTagProp = tagsProp.GetArrayElementAtIndex(0);
-            newTagProp.stringValue = newTag;
-        }
-    }
-
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
