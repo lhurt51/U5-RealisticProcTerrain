@@ -46,6 +46,8 @@ public class CustomTerrainEditor : Editor {
     // The height dampener to reduce height over time
     SerializedProperty MPDHeightDampenerPower;
     SerializedProperty MPDRoughness;
+    // How many loops the smooth algo does
+    SerializedProperty smoothAmount;
     // The boolean to see if the terrain should reset before generating
     SerializedProperty resetBeforeGen;
     // The table for our perlin paramters to display the parameters
@@ -90,6 +92,7 @@ public class CustomTerrainEditor : Editor {
         MPDHeightMax = serializedObject.FindProperty("MPDHeightMax");
         MPDHeightDampenerPower = serializedObject.FindProperty("MPDHeightDampenerPower");
         MPDRoughness = serializedObject.FindProperty("MPDRoughness");
+        smoothAmount = serializedObject.FindProperty("smoothAmount");
         resetBeforeGen = serializedObject.FindProperty("resetBeforeGen");
         perlinParameterTable = new GUITableState("perlinParameterTable");
         perlinParameters = serializedObject.FindProperty("perlinParameters");
@@ -176,12 +179,22 @@ public class CustomTerrainEditor : Editor {
         if (showMPD)
         {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-            GUILayout.Label("Smooth The Terrain Base On MPD ", EditorStyles.boldLabel);
+            GUILayout.Label("Set Height Base On MPD ", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(MPDHeightMin);
             EditorGUILayout.PropertyField(MPDHeightMax);
             EditorGUILayout.PropertyField(MPDHeightDampenerPower);
             EditorGUILayout.PropertyField(MPDRoughness);
             if (GUILayout.Button("MPD")) terrain.MPD();
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        showMPD = EditorGUILayout.Foldout(showMPD, "SmoothProps");
+        if (showMPD)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Smooth The Terrain", EditorStyles.boldLabel);
+            EditorGUILayout.IntSlider(smoothAmount, 1, 10, new GUIContent("Smooth Amount"));
+            if (GUILayout.Button("Smooth")) terrain.Smooth();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);

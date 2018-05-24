@@ -56,6 +56,9 @@ public class CustomTerrain : MonoBehaviour {
     public float MPDHeightDampenerPower = 2.0f;
     public float MPDRoughness = 2.0f;
 
+    // Smooth Algo -------------------------------------------------
+    public int smoothAmount = 5;
+
     // Acess to terrain data ---------------------------------------
     public Terrain terrain;
     public TerrainData terrainData;
@@ -207,13 +210,6 @@ public class CustomTerrain : MonoBehaviour {
         int midX, midY;
         int pmidXL, pmidXR, pmidYU, pmidYD;
 
-        /*
-        heightMap[0, 0] = UnityEngine.Random.Range(0.0f, 0.2f);
-        heightMap[0, terrainData.heightmapHeight - 2] = UnityEngine.Random.Range(0.0f, 0.2f);
-        heightMap[terrainData.heightmapWidth - 2, 0] = UnityEngine.Random.Range(0.0f, 0.2f);
-        heightMap[terrainData.heightmapWidth - 2, terrainData.heightmapHeight - 2] = UnityEngine.Random.Range(0.0f, 0.2f);
-        */
-
         while (squareSize > 0.0f)
         {
             for (int x = 0; x < width; x += squareSize)
@@ -245,6 +241,7 @@ public class CustomTerrain : MonoBehaviour {
                     pmidXL = (int)(midX - squareSize);
                     pmidYD = (int)(midY - squareSize);
 
+                    // Make sure all points are within range
                     if (pmidXL <= 0 || pmidYD <= 0 || pmidXR >= width - 1 || pmidYU >= width - 1) continue;
 
                     // Calc the square val for the bottom side
@@ -262,6 +259,50 @@ public class CustomTerrain : MonoBehaviour {
             heightMax *= heightDampener;
         }
 
+        terrainData.SetHeights(0, 0, heightMap);
+    }
+
+    private List<Vector2> GenerateNeighbours(Vector2 pos, int width, int height)
+    {
+        List<Vector2> neighbours = new List<Vector2>();
+
+        for (int y = -1; y < 2; y++)
+        {
+            for (int x = -1; x < 2; x++)
+            {
+                if (!(x == 0 && y == 0))
+                {
+                    Vector2 nPos = new Vector2(Mathf.Clamp(pos.x + x, 0.0f, width - 1), Mathf.Clamp(pos.y + y, 0.0f, height - 1));
+
+                    if (!neighbours.Contains(nPos)) neighbours.Add(nPos);
+                }
+            }
+        }
+        return neighbours;
+    }
+
+    public void Smooth()
+    {
+        float[,] heightMap = GetHeightMap();
+
+        for (int i = 0; i < smoothAmount; i++)
+        {
+            for (int y = 0; y < terrainData.heightmapHeight; y++)
+            {
+                for (int x = 0; x < terrainData.heightmapWidth; x++)
+                {
+                    float avgHeight = heightMap[x, y];
+                    List<Vector2> neighbours = GenerateNeighbours(new Vector2(x, y), terrainData.heightmapWidth, terrainData.heightmapHeight);
+
+                    foreach (Vector2 n in neighbours)
+                    {
+                        avgHeight += heightMap[(int)n.x, (int)n.y];
+                    }
+
+                    heightMap[x, y] = avgHeight / ((float)neighbours.Count + 1);
+                }
+            }
+        }
         terrainData.SetHeights(0, 0, heightMap);
     }
 
