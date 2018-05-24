@@ -283,7 +283,9 @@ public class CustomTerrain : MonoBehaviour {
 
     public void Smooth()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
+        float smoothProgress = 0;
+        EditorUtility.DisplayProgressBar("Smoothing Terrain", "Progress", smoothProgress);
 
         for (int i = 0; i < smoothAmount; i++)
         {
@@ -302,8 +304,11 @@ public class CustomTerrain : MonoBehaviour {
                     heightMap[x, y] = avgHeight / ((float)neighbours.Count + 1);
                 }
             }
+            smoothProgress++;
+            EditorUtility.DisplayProgressBar("Smoothing Terrain", "Progress", smoothProgress / smoothAmount);
         }
         terrainData.SetHeights(0, 0, heightMap);
+        EditorUtility.ClearProgressBar();
     }
 
     public void ResetTerrain()

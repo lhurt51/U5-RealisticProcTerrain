@@ -222,9 +222,14 @@ MonoBehaviour:
   voronoiFallOff: 10
   voronoiDropOff: 10
   voronoiType: 3
+  MPDHeightMin: -10
+  MPDHeightMax: 10
+  MPDHeightDampenerPower: 2
+  MPDRoughness: 2
+  smoothAmount: 9
   terrain: {fileID: 1076039430}
   terrainData: {fileID: 15600000, guid: 5ee3ddc9c1a6f0b479917dafbd0242b1, type: 2}
-  resetBeforeGen: 1
+  resetBeforeGen: 0
 --- !u!1 &1984429388
 GameObject:
   m_ObjectHideFlags: 0
