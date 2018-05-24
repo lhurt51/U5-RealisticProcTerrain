@@ -77,6 +77,9 @@ public class CustomTerrainEditor : Editor {
     // Fold out for splat map generator
     bool showSplatMap = false;
 
+    // Scrollbar global
+    Vector2 scrollPos;
+
     // To allow us to recompile in editor without playing
     void OnEnable()
     {
@@ -113,6 +116,11 @@ public class CustomTerrainEditor : Editor {
         serializedObject.Update();
 
         CustomTerrain terrain = (CustomTerrain)target;
+
+        // Scrollbar starting code
+        Rect r = EditorGUILayout.BeginVertical();
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(r.width), GUILayout.Height(r.height));
+        EditorGUI.indentLevel++;
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         showRandom = EditorGUILayout.Foldout(showRandom, "RandomGenProps");
@@ -228,6 +236,10 @@ public class CustomTerrainEditor : Editor {
         EditorGUILayout.PropertyField(resetBeforeGen);
         if (GUILayout.Button("Reset Terrain")) terrain.ResetTerrain();
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
+        //Scrollbar ending code
+        EditorGUILayout.EndScrollView();
+        EditorGUILayout.EndVertical();
 
         serializedObject.ApplyModifiedProperties();
     }
