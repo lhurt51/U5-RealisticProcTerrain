@@ -56,6 +56,14 @@ public class TextureCreatorWindow : EditorWindow {
         pTexture.Apply(false, false);
     }
 
+    private void Save()
+    {
+        byte[] bytes = pTexture.EncodeToPNG();
+
+        System.IO.Directory.CreateDirectory(Application.dataPath + "/SavedTextures");
+        File.WriteAllBytes(Application.dataPath + "/SavedTextures/" + filename + ".png", bytes);
+    }
+
 	[MenuItem("Window/TextureCreatorWindow")]
     public static void ShowWindow()
     {
@@ -104,7 +112,7 @@ public class TextureCreatorWindow : EditorWindow {
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
 
-        if (GUILayout.Button("Save", GUILayout.Width(wSize))) { }
+        if (GUILayout.Button("Save", GUILayout.Width(wSize))) Save();
 
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();

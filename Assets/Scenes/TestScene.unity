@@ -201,7 +201,7 @@ MonoBehaviour:
   terrainData: {fileID: 15600000, guid: 5ee3ddc9c1a6f0b479917dafbd0242b1, type: 2}
   randomHeightRange: {x: 0, y: 0.01}
   heightMapImage: {fileID: 2800000, guid: 141ca33bc11b68d408fc7cf870d5834d, type: 3}
-  heightMapScale: {x: 1.9, y: 0.5, z: 1.9}
+  heightMapScale: {x: 1.9, y: 1.1, z: 1.9}
   perlinXScale: 0.002
   perlinYScale: 0.002
   perlinOffsetX: 5000
@@ -223,7 +223,7 @@ MonoBehaviour:
   voronoiMaxHeight: 0.4
   voronoiFallOff: 10
   voronoiDropOff: 10
-  voronoiType: 3
+  voronoiType: 0
   MPDHeightMin: -10
   MPDHeightMax: 10
   MPDHeightDampenerPower: 2
@@ -232,15 +232,15 @@ MonoBehaviour:
   - texture: {fileID: 2800000, guid: 79d5431cd68194d08a40d2bbe4ebcef9, type: 3}
     minHeight: 0
     maxHeight: 0.4
-    minSlope: 45
+    minSlope: 55
     maxSlope: 90
     tileOffset: {x: 0, y: 0}
     tileSize: {x: 50, y: 50}
     splatBlendOffset: 0.01
-    splatNoiseVScale: {x: 0.01, y: 0.01}
-    splatNoiseScaler: 0.01
+    splatNoiseVScale: {x: 0.1, y: 0.1}
+    splatNoiseScaler: 0.1
     remove: 0
-  - texture: {fileID: 2800000, guid: c1a90a563817e4539a29463418e6dd66, type: 3}
+  - texture: {fileID: 2800000, guid: b3b656cca21f546f699d08c8ee074b8d, type: 3}
     minHeight: 0.4
     maxHeight: 0.7
     minSlope: 0
@@ -248,21 +248,43 @@ MonoBehaviour:
     tileOffset: {x: 0, y: 0}
     tileSize: {x: 50, y: 50}
     splatBlendOffset: 0.01
-    splatNoiseVScale: {x: 0.01, y: 0.01}
-    splatNoiseScaler: 0.01
+    splatNoiseVScale: {x: 0.1, y: 0.1}
+    splatNoiseScaler: 0.1
     remove: 0
   - texture: {fileID: 2800000, guid: dd49ed99f55924d13bacefd240626bc5, type: 3}
     minHeight: 0
     maxHeight: 0.4
     minSlope: 0
-    maxSlope: 45
+    maxSlope: 55
     tileOffset: {x: 0, y: 0}
     tileSize: {x: 50, y: 50}
     splatBlendOffset: 0.01
-    splatNoiseVScale: {x: 0.01, y: 0.01}
+    splatNoiseVScale: {x: 0.1, y: 0.1}
     splatNoiseScaler: 0.01
     remove: 0
-  smoothAmount: 9
+  - texture: {fileID: 2800000, guid: fa749c6a04ad34af5af35082813d7df8, type: 3}
+    minHeight: 0.7
+    maxHeight: 1
+    minSlope: 0
+    maxSlope: 55
+    tileOffset: {x: 0, y: 0}
+    tileSize: {x: 50, y: 50}
+    splatBlendOffset: 0.01
+    splatNoiseVScale: {x: 0.1, y: 0.1}
+    splatNoiseScaler: 0.15
+    remove: 0
+  - texture: {fileID: 2800000, guid: cbc6c8225a70e4475b3b2f20c8a7ec98, type: 3}
+    minHeight: 0.7
+    maxHeight: 1
+    minSlope: 50
+    maxSlope: 90
+    tileOffset: {x: 0, y: 0}
+    tileSize: {x: 50, y: 50}
+    splatBlendOffset: 0.01
+    splatNoiseVScale: {x: 0.1, y: 0.1}
+    splatNoiseScaler: 0.15
+    remove: 0
+  smoothAmount: 10
   resetBeforeGen: 1
 --- !u!1 &1984429388
 GameObject:
