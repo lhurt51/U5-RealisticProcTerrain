@@ -12,6 +12,8 @@ public class TextureCreatorWindow : EditorWindow {
     float perlinHeightScale = 0.09f;
     int perlinOffsetX = 0;
     int PerlinOffsetY = 0;
+    float brightness = 0.5f;
+    float contrast = 0.5f;
     bool alphaToggle = false;
     bool seamlessToggle = false;
     bool remapToggle = false;
@@ -23,6 +25,8 @@ public class TextureCreatorWindow : EditorWindow {
         int w = 513;
         int h = 513;
         float pValue;
+        float minColor = 1;
+        float maxColor = 0;
         Color pixColor = Color.white;
 
         for (int y = 0; y < h; y++)
@@ -48,9 +52,27 @@ public class TextureCreatorWindow : EditorWindow {
                 }
                 else pValue = Utils.fBM((x + perlinOffsetX) * perlinXScale, (y + PerlinOffsetY) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
 
-                float colValue = pValue;
+                float colValue = contrast * (pValue - 0.5f) + 0.5f * brightness;
+                if (minColor > colValue) minColor = colValue;
+                if (maxColor < colValue) maxColor = colValue;
                 pixColor = new Color(colValue, colValue, colValue, alphaToggle ? colValue : 1.0f);
                 pTexture.SetPixel(x, y, pixColor);
+            }
+        }
+        if (remapToggle)
+        {
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    pixColor = pTexture.GetPixel(x, y);
+                    float colVal = pixColor.r;
+                    colVal = Utils.Map(colVal, minColor, maxColor, 0.0f, 1.0f);
+                    pixColor.r = colVal;
+                    pixColor.g = colVal;
+                    pixColor.b = colVal;
+                    pTexture.SetPixel(x, y, pixColor);
+                }
             }
         }
         pTexture.Apply(false, false);
@@ -89,6 +111,8 @@ public class TextureCreatorWindow : EditorWindow {
         perlinHeightScale = EditorGUILayout.Slider("Height Scale", perlinHeightScale, 0.0f, 1.0f);
         perlinOffsetX = EditorGUILayout.IntSlider("Offset X", perlinOffsetX, 0, 10000);
         PerlinOffsetY = EditorGUILayout.IntSlider("Offset Y", PerlinOffsetY, 0, 10000);
+        brightness = EditorGUILayout.Slider("Brightness", brightness, 0.0f, 2.0f);
+        contrast = EditorGUILayout.Slider("Contrast", contrast, 0.0f, 2.0f);
         alphaToggle = EditorGUILayout.Toggle("Alpha?", alphaToggle);
         remapToggle = EditorGUILayout.Toggle("Remap?", remapToggle);
         seamlessToggle = EditorGUILayout.Toggle("Seamless", seamlessToggle);

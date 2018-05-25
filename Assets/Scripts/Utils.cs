@@ -31,4 +31,9 @@ public static class Utils {
         return total / maxValue;
     }
 
+    public static float Map(float val, float ogMin, float ogMax, float targetMin, float targetMax)
+    {
+        return (val - ogMin) * (targetMax - targetMin) / (ogMax - ogMin) + targetMin;
+    }
+
 }
