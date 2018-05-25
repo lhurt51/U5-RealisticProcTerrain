@@ -134,7 +134,7 @@ public class CustomTerrain : MonoBehaviour {
         this.gameObject.tag = "Terrain";
     }
 
-    private float[,] GetHeightMap()
+    private float[,] GetHeightMapChoice()
     {
         if (!resetBeforeGen) return terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
         else return new float[terrainData.heightmapWidth, terrainData.heightmapHeight];
@@ -188,9 +188,14 @@ public class CustomTerrain : MonoBehaviour {
     }
 
     // Public Class Methods ------------------------------------------
+    public float[,] GetHeightMap()
+    {
+        return terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
+    }
+
     public void RandomTerrain()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = GetHeightMapChoice();
 
         for (int x = 0; x < terrainData.heightmapWidth; x++)
         {
@@ -205,7 +210,7 @@ public class CustomTerrain : MonoBehaviour {
 
     public void LoadTexture()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = GetHeightMapChoice();
 
         for (int x = 0; x < terrainData.heightmapWidth; x++)
         {
@@ -220,7 +225,7 @@ public class CustomTerrain : MonoBehaviour {
 
     public void Perlin()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = GetHeightMapChoice();
 
         for (int x = 0; x < terrainData.heightmapWidth; x++)
         {
@@ -257,7 +262,7 @@ public class CustomTerrain : MonoBehaviour {
 
     public void MultiplePerlinTerrain()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = GetHeightMapChoice();
 
         for (int y = 0; y < terrainData.heightmapHeight; y++)
         {
@@ -274,7 +279,7 @@ public class CustomTerrain : MonoBehaviour {
 
     public void Voronoi()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = GetHeightMapChoice();
 
         for (int p = 0; p < voronoiPeaks; p++)
         {
@@ -315,7 +320,7 @@ public class CustomTerrain : MonoBehaviour {
 
     public void MPD()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = GetHeightMapChoice();
         int width = terrainData.heightmapWidth - 1;
         int squareSize = width;
         float heightMin = MPDHeightMin;
@@ -380,7 +385,7 @@ public class CustomTerrain : MonoBehaviour {
 
     public void Smooth()
     {
-        float[,] heightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
+        float[,] heightMap = GetHeightMap();
         float smoothProgress = 0;
         EditorUtility.DisplayProgressBar("Smoothing Terrain", "Progress", smoothProgress);
 
@@ -443,7 +448,7 @@ public class CustomTerrain : MonoBehaviour {
         }
         terrainData.splatPrototypes = newSplatProto;
 
-        float[,] heightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
+        float[,] heightMap = GetHeightMap();
         float[,,] splatMapData = new float[terrainData.alphamapWidth, terrainData.alphamapHeight, terrainData.alphamapLayers];
 
         for (int y = 0; y < terrainData.alphamapHeight; y++)

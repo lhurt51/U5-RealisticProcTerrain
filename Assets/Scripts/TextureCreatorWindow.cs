@@ -5,11 +5,11 @@ using System.IO;
 public class TextureCreatorWindow : EditorWindow {
 
     string filename = "myProceduralTexture";
-    float perlinXScale = 0.01f;
-    float perlinYScale = 0.01f;
-    int perlinOctaves = 3;
-    float perlinPersistance = 8.0f;
-    float perlinHeightScale = 0.09f;
+    float perlinXScale = 0.001f;
+    float perlinYScale = 0.001f;
+    int perlinOctaves = 5;
+    float perlinPersistance = 5.0f;
+    float perlinHeightScale = 0.9f;
     int perlinOffsetX = 0;
     int PerlinOffsetY = 0;
     float brightness = 0.5f;
@@ -41,7 +41,7 @@ public class TextureCreatorWindow : EditorWindow {
                     float noise01 = Utils.fBM((x + perlinOffsetX) * perlinXScale, (y + PerlinOffsetY + h) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
                     float noise10 = Utils.fBM((x + perlinOffsetX + w) * perlinXScale, (y + PerlinOffsetY) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
                     float noise11 = Utils.fBM((x + perlinOffsetX + w) * perlinXScale, (y + PerlinOffsetY + h) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
-                    float noiseTotal = u * v * noise01 + u * (1 - v) * noise01 + (1 - u) * v * noise10 + (1 - u) * (1 - v) * noise11;
+                    float noiseTotal = u * v * noise00 + u * (1 - v) * noise01 + (1 - u) * v * noise10 + (1 - u) * (1 - v) * noise11;
                     float value = (int)(256 * noiseTotal) + 50;
                     float r = Mathf.Clamp((int)noise00, 0, 255);
                     float g = Mathf.Clamp(value, 0, 255);

@@ -76,9 +76,28 @@ public class CustomTerrainEditor : Editor {
     bool showSmooth = false;
     // Fold out for splat map generator
     bool showSplatMap = false;
+    // Fold out for height map display
+    bool showHeightMap = false;
+
+    // Displayed -----------
+    Texture2D heightMapTexture;
 
     // Scrollbar global
     Vector2 scrollPos;
+
+    private void RefreshHeightMapDisplay(CustomTerrain terrain)
+    {
+        float[,] heightMap = terrain.GetHeightMap();
+
+        for (int y = 0; y < terrain.terrainData.heightmapHeight; y++)
+        {
+            for (int x = 0; x < terrain.terrainData.heightmapWidth; x++)
+            {
+                heightMapTexture.SetPixel(x, y, new Color(heightMap[x, y], heightMap[x, y], heightMap[x, y], 1.0f));
+            }
+        }
+        heightMapTexture.Apply();
+    }
 
     // To allow us to recompile in editor without playing
     void OnEnable()
@@ -109,10 +128,14 @@ public class CustomTerrainEditor : Editor {
         perlinParameters = serializedObject.FindProperty("perlinParameters");
         splatMapTable = new GUITableState("splatMapTable");
         splatHeights = serializedObject.FindProperty("splatHeights");
+
+        heightMapTexture = new Texture2D(513, 513, TextureFormat.ARGB32, false);
     }
 
     public override void OnInspectorGUI()
     {
+        int wSize = (int)(EditorGUIUtility.currentViewWidth - 100);
+
         serializedObject.Update();
 
         CustomTerrain terrain = (CustomTerrain)target;
@@ -235,7 +258,34 @@ public class CustomTerrainEditor : Editor {
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         EditorGUILayout.PropertyField(resetBeforeGen);
         if (GUILayout.Button("Reset Terrain")) terrain.ResetTerrain();
+
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        showHeightMap = EditorGUILayout.Foldout(showHeightMap, "ShowHeightMap");
+        if (showHeightMap)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("View The Height Map", EditorStyles.boldLabel, GUILayout.Width(wSize / 2));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+
+            GUILayout.Label(heightMapTexture, GUILayout.Width(wSize), GUILayout.Height(wSize));
+
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("Refresh", GUILayout.Width(wSize))) RefreshHeightMapDisplay(terrain);
+
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+        }
 
         //Scrollbar ending code
         EditorGUILayout.EndScrollView();
