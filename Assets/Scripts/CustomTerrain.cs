@@ -82,6 +82,26 @@ public class CustomTerrain : MonoBehaviour {
         new SplatHeights()
     };
 
+    // Vegetation --------------------------------------------------
+    public int vegMaxTrees = 5000;
+    public int vegTreeSpacing = 5;
+
+    [System.Serializable]
+    public class Vegetation
+    {
+        public GameObject mesh;
+        public float minHeight = 0.1f;
+        public float maxHeight = 0.2f;
+        public float minSlope = 0.0f;
+        public float maxSlope = 90.0f;
+        public bool remove = false;
+    }
+
+    public List<Vegetation> vegetationList = new List<Vegetation>()
+    {
+        new Vegetation()
+    };
+
     // Smooth Algo -------------------------------------------------
     public int smoothAmount = 5;
 
@@ -256,7 +276,7 @@ public class CustomTerrain : MonoBehaviour {
         }
 
         // If there is nothing in the list. Add the first perlin parameter back to the list
-        if (keptPerlinParameters.Count == 0) keptPerlinParameters.Add(perlinParameters[0]);
+        if (keptPerlinParameters.Count == 0) keptPerlinParameters.Add(new PerlinParameters());
         perlinParameters = keptPerlinParameters;
     }
 
@@ -427,7 +447,7 @@ public class CustomTerrain : MonoBehaviour {
             if (!splatHeights[i].remove) keptSplatHeights.Add(splatHeights[i]);
         }
         // Must keep atleast one thing in the array
-        if (keptSplatHeights.Count == 0) keptSplatHeights.Add(splatHeights[0]);
+        if (keptSplatHeights.Count == 0) keptSplatHeights.Add(new SplatHeights());
         splatHeights = keptSplatHeights;
     }
 
@@ -474,6 +494,39 @@ public class CustomTerrain : MonoBehaviour {
             }
         }
         terrainData.SetAlphamaps(0, 0, splatMapData);
+    }
+
+    public void AddNewVegetation()
+    {
+        vegetationList.Add(new Vegetation());
+    }
+
+    public void RemoveVegetation()
+    {
+        List<Vegetation> keptVegetation = new List<Vegetation>();
+
+        for (int i = 0; i < vegetationList.Count; i++)
+        {
+            if (!vegetationList[i].remove) keptVegetation.Add(vegetationList[i]);
+        }
+        // Must keep atleast one thing in the array
+        if (keptVegetation.Count == 0) keptVegetation.Add(new Vegetation());
+        vegetationList = keptVegetation;
+    }
+
+    public void PlaceVegetation()
+    {
+        TreePrototype[] newTreeProtos;
+        newTreeProtos = new TreePrototype[vegetationList.Count];
+        int tindex = 0;
+        
+        foreach (Vegetation t in vegetationList)
+        {
+            newTreeProtos[tindex] = new TreePrototype();
+            newTreeProtos[tindex].prefab = t.mesh;
+            tindex++;
+        }
+        terrainData.treePrototypes = newTreeProtos;
     }
 
     public void ResetTerrain()

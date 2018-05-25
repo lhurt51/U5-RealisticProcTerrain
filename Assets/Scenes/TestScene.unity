@@ -200,8 +200,8 @@ MonoBehaviour:
   terrain: {fileID: 1076039430}
   terrainData: {fileID: 15600000, guid: 5ee3ddc9c1a6f0b479917dafbd0242b1, type: 2}
   randomHeightRange: {x: 0, y: 0.01}
-  heightMapImage: {fileID: 2800000, guid: 141ca33bc11b68d408fc7cf870d5834d, type: 3}
-  heightMapScale: {x: 1.9, y: 1.1, z: 1.9}
+  heightMapImage: {fileID: 2800000, guid: 051946d4c7a151142bd8330ae672ec3e, type: 3}
+  heightMapScale: {x: 2, y: 0.3, z: 2}
   perlinXScale: 0.002
   perlinYScale: 0.002
   perlinOffsetX: 5000
@@ -283,6 +283,21 @@ MonoBehaviour:
     splatBlendOffset: 0.01
     splatNoiseVScale: {x: 0.1, y: 0.1}
     splatNoiseScaler: 0.15
+    remove: 0
+  vegMaxTrees: 5000
+  vegTreeSpacing: 5
+  vegetationList:
+  - mesh: {fileID: 100000, guid: 2a44e858bd119bca11002b7b44295342, type: 3}
+    minHeight: 0.1
+    maxHeight: 0.2
+    minSlope: 0
+    maxSlope: 90
+    remove: 0
+  - mesh: {fileID: 100000, guid: 02e48269f8d554fbca75435761452392, type: 3}
+    minHeight: 0.1
+    maxHeight: 0.2
+    minSlope: 0
+    maxSlope: 90
     remove: 0
   smoothAmount: 10
   resetBeforeGen: 1

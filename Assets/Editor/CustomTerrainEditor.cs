@@ -58,6 +58,14 @@ public class CustomTerrainEditor : Editor {
     GUITableState splatMapTable;
     // The splat heights list that we want to display
     SerializedProperty splatHeights;
+    // The maximum amount of trees aloud on the terrain
+    SerializedProperty vegMaxTrees;
+    // How spaced out the trees will be
+    SerializedProperty vegTreeSpacing;
+    // The table for our vegetation to display parameters
+    GUITableState vegetationTable;
+    // The vegetation list that we want to display
+    SerializedProperty vegetationList;
 
     // Fold outs ------------
     // Fold out for the random hieght generation properties
@@ -76,6 +84,8 @@ public class CustomTerrainEditor : Editor {
     bool showSmooth = false;
     // Fold out for splat map generator
     bool showSplatMap = false;
+    // Foldout for vegetation generator
+    bool showVegetation = false;
     // Fold out for height map display
     bool showHeightMap = false;
 
@@ -128,6 +138,10 @@ public class CustomTerrainEditor : Editor {
         perlinParameters = serializedObject.FindProperty("perlinParameters");
         splatMapTable = new GUITableState("splatMapTable");
         splatHeights = serializedObject.FindProperty("splatHeights");
+        vegMaxTrees = serializedObject.FindProperty("vegMaxTrees");
+        vegTreeSpacing = serializedObject.FindProperty("vegTreeSpacing");
+        vegetationTable = new GUITableState("vegetationTable");
+        vegetationList = serializedObject.FindProperty("vegetationList");
 
         heightMapTexture = new Texture2D(513, 513, TextureFormat.ARGB32, false);
     }
@@ -243,6 +257,25 @@ public class CustomTerrainEditor : Editor {
             EditorGUILayout.EndHorizontal();
 
             if (GUILayout.Button("Apply SplatMap")) terrain.SplatMaps();
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        showVegetation = EditorGUILayout.Foldout(showVegetation, "VegGenProps");
+        if (showVegetation)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Generate Vegetation", EditorStyles.boldLabel);
+            EditorGUILayout.IntSlider(vegMaxTrees, 0, 10000, new GUIContent("Max Trees"));
+            EditorGUILayout.IntSlider(vegTreeSpacing, 2, 20, new GUIContent("Tree Spacing"));
+            vegetationTable = GUITableLayout.DrawTable(vegetationTable, serializedObject.FindProperty("vegetationList"));
+
+            GUILayout.Space(20);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("+")) terrain.AddNewVegetation();
+            if (GUILayout.Button("-")) terrain.RemoveVegetation();
+            EditorGUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Generate Vegetation")) terrain.PlaceVegetation();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
