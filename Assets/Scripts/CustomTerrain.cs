@@ -516,10 +516,11 @@ public class CustomTerrain : MonoBehaviour {
 
     public void PlaceVegetation()
     {
-        TreePrototype[] newTreeProtos;
-        newTreeProtos = new TreePrototype[vegetationList.Count];
         int tindex = 0;
-        
+        TreePrototype[] newTreeProtos;
+        List<TreeInstance> allVeg = new List<TreeInstance>();
+
+        newTreeProtos = new TreePrototype[vegetationList.Count];
         foreach (Vegetation t in vegetationList)
         {
             newTreeProtos[tindex] = new TreePrototype();
@@ -527,6 +528,37 @@ public class CustomTerrain : MonoBehaviour {
             tindex++;
         }
         terrainData.treePrototypes = newTreeProtos;
+
+        for (int z = 0; z < terrainData.size.z; z += vegTreeSpacing)
+        {
+            for (int x = 0; x < terrainData.size.x; x += vegTreeSpacing)
+            {
+                for (int tp = 0; tp < terrainData.treePrototypes.Length; tp++)
+                {
+                    float thisHeight = terrainData.GetHeight(x, z) / terrainData.size.y;
+                    float thisHeightStart = vegetationList[tp].minHeight;
+                    float thisHeightEnd = vegetationList[tp].maxHeight;
+
+                    if (thisHeight >= thisHeightStart && thisHeight <= thisHeightEnd)
+                    {
+                        TreeInstance instance = new TreeInstance();
+
+                        instance.position = new Vector3((x + UnityEngine.Random.Range(-5.0f, 5.0f)) / terrainData.size.x, thisHeight, (z + UnityEngine.Random.Range(-5.0f, 5.0f)) / terrainData.size.z);
+                        instance.rotation = UnityEngine.Random.Range(0.0f, 360.0f);
+                        instance.prototypeIndex = tp;
+                        instance.color = Color.white;
+                        instance.lightmapColor = Color.white;
+                        instance.heightScale = 0.95f;
+                        instance.widthScale = 0.95f;
+
+                        allVeg.Add(instance);
+                        if (allVeg.Count >= vegMaxTrees) goto TREESDONE;
+                    }
+                }
+            }
+        }
+        TREESDONE:
+            terrainData.treeInstances = allVeg.ToArray();
     }
 
     public void ResetTerrain()
