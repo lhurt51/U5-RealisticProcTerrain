@@ -94,6 +94,14 @@ public class CustomTerrain : MonoBehaviour {
         public float maxHeight = 0.2f;
         public float minSlope = 0.0f;
         public float maxSlope = 70.0f;
+        public float minScale = 0.5f;
+        public float maxScale = 1.2f;
+        public float minRotation = 0.0f;
+        public float maxRotation = 360.0f;
+        public float density = 0.5f;
+        public Color color1 = Color.white;
+        public Color color2 = Color.white;
+        public Color lightColor = Color.white;
         public bool remove = false;
     }
 
@@ -561,11 +569,14 @@ public class CustomTerrain : MonoBehaviour {
             {
                 for (int tp = 0; tp < terrainData.treePrototypes.Length; tp++)
                 {
+                    if (UnityEngine.Random.Range(0.0f, 1.0f) > vegetationList[tp].density) break;
+
                     float thisHeight = terrainData.GetHeight(x, z) / terrainData.size.y;
                     float thisHeightStart = vegetationList[tp].minHeight;
                     float thisHeightEnd = vegetationList[tp].maxHeight;
+                    float steepness = terrainData.GetSteepness(x / (float)terrainData.size.x, z / (float)terrainData.size.z);
 
-                    if (thisHeight >= thisHeightStart && thisHeight <= thisHeightEnd)
+                    if ((thisHeight >= thisHeightStart && thisHeight <= thisHeightEnd) && (steepness >= vegetationList[tp].minSlope && steepness <= vegetationList[tp].maxSlope))
                     {
                         TreeInstance instance = new TreeInstance();
                         instance.position = new Vector3((x + UnityEngine.Random.Range(-5.0f, 5.0f)) / terrainData.size.x, thisHeight, (z + UnityEngine.Random.Range(-5.0f, 5.0f)) / terrainData.size.z);
@@ -575,19 +586,21 @@ public class CustomTerrain : MonoBehaviour {
                         RaycastHit hit;
                         int layerMask = 1 << terrainLayer;
 
-                        if (Physics.Raycast(treeWorldPos, -Vector2.up, out hit, 100, layerMask) || Physics.Raycast(treeWorldPos, Vector2.up, out hit, 100, layerMask))
+                        if (Physics.Raycast(treeWorldPos + new Vector3(0.0f, 10.0f, 0.0f), -Vector2.up, out hit, 100, layerMask) || Physics.Raycast(treeWorldPos + new Vector3(0.0f, -10.0f, 0.0f), Vector2.up, out hit, 100, layerMask))
                         {
+                            float scale = UnityEngine.Random.Range(vegetationList[tp].minScale, vegetationList[tp].maxScale);
                             float treeHeight = (hit.point.y - this.transform.position.y) / terrainData.size.y;
-                            instance.position = new Vector3(instance.position.x, treeHeight, instance.position.z);
 
                             // Setting all properties
-                            instance.rotation = UnityEngine.Random.Range(0.0f, 360.0f);
+                            instance.position = new Vector3(instance.position.x, treeHeight, instance.position.z);
+                            instance.rotation = UnityEngine.Random.Range(vegetationList[tp].minRotation, vegetationList[tp].maxRotation);
                             instance.prototypeIndex = tp;
-                            instance.color = Color.white;
-                            instance.lightmapColor = Color.white;
-                            instance.heightScale = 0.95f;
-                            instance.widthScale = 0.95f;
+                            instance.color = Color.Lerp(vegetationList[tp].color1, vegetationList[tp].color2, UnityEngine.Random.Range(0.0f, 1.0f));
+                            instance.lightmapColor = vegetationList[tp].lightColor;
+                            instance.heightScale = scale;
+                            instance.widthScale = scale;
 
+                            // Adding it to our terrain
                             allVeg.Add(instance);
                             if (allVeg.Count >= vegMaxTrees) goto TREESDONE;
                         }
