@@ -298,8 +298,9 @@ public class CustomTerrainEditor : Editor {
         {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             GUILayout.Label("Generate Detail", EditorStyles.boldLabel);
-            EditorGUILayout.IntSlider(vegMaxTrees, 0, 10000, new GUIContent("Max Detail"));
-            EditorGUILayout.IntSlider(vegTreeSpacing, 2, 20, new GUIContent("Detail Spacing"));
+            EditorGUILayout.IntSlider(maxDetails, 0, 10000, new GUIContent("Max Detail"));
+            terrain.GetComponent<Terrain>().detailObjectDistance = maxDetails.intValue;
+            EditorGUILayout.IntSlider(detailSpacing, 2, 20, new GUIContent("Detail Spacing"));
             detailTable = GUITableLayout.DrawTable(detailTable, serializedObject.FindProperty("detailList"));
 
             GUILayout.Space(20);

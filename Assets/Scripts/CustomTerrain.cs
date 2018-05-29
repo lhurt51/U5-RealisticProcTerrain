@@ -680,6 +680,8 @@ public class CustomTerrain : MonoBehaviour {
         }
         terrainData.detailPrototypes = newDetailPrototypes;
 
+        float[,] heightMap = GetHeightMap();
+
         for (int i = 0; i < terrainData.detailPrototypes.Length; i++)
         {
             int[,] detailMap = new int[terrainData.detailWidth, terrainData.detailHeight];
@@ -690,7 +692,15 @@ public class CustomTerrain : MonoBehaviour {
                 {
                     if (UnityEngine.Random.Range(0.0f, 1.0f) > detailList[i].density) continue;
 
-                    detailMap[y, x] = 1;
+                    int xHM = (int)(x / (float)terrainData.detailWidth * terrainData.heightmapWidth);
+                    int yHM = (int)(y / (float)terrainData.detailHeight * terrainData.heightmapHeight);
+
+                    float thisNoise = Utils.Map(Mathf.PerlinNoise(x * detailList[i].feather, y * detailList[i].feather), 0, 1, 0.5f, 1);
+                    float thisHeightStart = detailList[i].minHeight * thisNoise - detailList[i].overlap * thisNoise;
+                    float nextHeightStart = detailList[i].maxHeight * thisNoise + detailList[i].overlap * thisNoise;
+                    float thisHeight = heightMap[yHM, xHM];
+                    float steepness = terrainData.GetSteepness(xHM / (float)terrainData.size.x, yHM / (float)terrainData.size.z);
+                    if ((thisHeight >= thisHeightStart && thisHeight <= nextHeightStart) && (steepness >= detailList[i].minSlope && steepness <= detailList[i].maxSlope)) detailMap[y, x] = 1;
                 }
             }
             terrainData.SetDetailLayer(0, 0, i, detailMap);
