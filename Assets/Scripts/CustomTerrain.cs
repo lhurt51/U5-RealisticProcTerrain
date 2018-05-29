@@ -108,8 +108,13 @@ public class CustomTerrain : MonoBehaviour {
     // Should it reset the terrain before generating a new height map
     public bool resetBeforeGen;
 
+    [SerializeField]
+    int terrainLayer = -1;
+
+    public enum TagType { Tag = 0, Layer = 1 }
+
     // Private Class Methods ----------------------------------------
-    private void AddTag(SerializedProperty tagsProp, string newTag)
+    private int AddTag(SerializedProperty tagsProp, string newTag, TagType tagType)
     {
         bool found = false;
 
@@ -117,16 +122,32 @@ public class CustomTerrain : MonoBehaviour {
         for (int i = 0; i < tagsProp.arraySize; i++)
         {
             SerializedProperty t = tagsProp.GetArrayElementAtIndex(i);
-            if (t.stringValue.Equals(newTag)) { found = true; break; }
+            if (t.stringValue.Equals(newTag)) { found = true; return i; }
         }
 
-        // Add the new tag
-        if (!found)
+        // Add new tag
+        if (!found && tagType == TagType.Tag)
         {
             tagsProp.InsertArrayElementAtIndex(0);
             SerializedProperty newTagProp = tagsProp.GetArrayElementAtIndex(0);
             newTagProp.stringValue = newTag;
         }
+        // Add new layer
+        else if (!found && tagType == TagType.Layer)
+        {
+            for (int j = 8; j < tagsProp.arraySize; j++)
+            {
+                SerializedProperty newLayer = tagsProp.GetArrayElementAtIndex(j);
+
+                // Add layer in next empty slot
+                if (newLayer.stringValue == "")
+                {
+                    newLayer.stringValue = newTag;
+                    return j;
+                }
+            }
+        }
+        return -1;
     }
 
     private void OnEnable()
@@ -142,16 +163,21 @@ public class CustomTerrain : MonoBehaviour {
     {
         SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
         SerializedProperty tagsProp = tagManager.FindProperty("tags");
+        SerializedProperty layerProp = tagManager.FindProperty("layers");
 
-        AddTag(tagsProp, "Terrain");
-        AddTag(tagsProp, "Cloud");
-        AddTag(tagsProp, "Shore");
+        AddTag(tagsProp, "Terrain", TagType.Tag);
+        AddTag(tagsProp, "Cloud", TagType.Tag);
+        AddTag(tagsProp, "Shore", TagType.Tag);
+
+        terrainLayer = AddTag(layerProp, "Terrain", TagType.Layer);
 
         // Apply tag changes to the tag database
         tagManager.ApplyModifiedProperties();
 
-        // Take this object
+        // Tag the game object as terrain
         this.gameObject.tag = "Terrain";
+        // Set the collision layer to terrain
+        this.gameObject.layer = terrainLayer;
     }
 
     private float[,] GetHeightMapChoice()

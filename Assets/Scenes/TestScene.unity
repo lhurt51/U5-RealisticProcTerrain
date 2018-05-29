@@ -284,17 +284,17 @@ MonoBehaviour:
     splatNoiseVScale: {x: 0.1, y: 0.1}
     splatNoiseScaler: 0.15
     remove: 0
-  vegMaxTrees: 5000
-  vegTreeSpacing: 5
+  vegMaxTrees: 7431
+  vegTreeSpacing: 10
   vegetationList:
   - mesh: {fileID: 100000, guid: 2a44e858bd119bca11002b7b44295342, type: 3}
-    minHeight: 0.1
-    maxHeight: 0.2
+    minHeight: 0.2
+    maxHeight: 1
     minSlope: 0
     maxSlope: 90
     remove: 0
   - mesh: {fileID: 100000, guid: 02e48269f8d554fbca75435761452392, type: 3}
-    minHeight: 0.1
+    minHeight: 0
     maxHeight: 0.2
     minSlope: 0
     maxSlope: 90
