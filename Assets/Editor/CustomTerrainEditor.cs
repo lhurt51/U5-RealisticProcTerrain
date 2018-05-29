@@ -66,6 +66,14 @@ public class CustomTerrainEditor : Editor {
     GUITableState vegetationTable;
     // The vegetation list that we want to display
     SerializedProperty vegetationList;
+    // The maximum amount of details aloud on the terrain
+    SerializedProperty maxDetails;
+    // How spaced out the details will be
+    SerializedProperty detailSpacing;
+    // The table for our details to display parameters
+    GUITableState detailTable;
+    // The details list that we want to display
+    SerializedProperty detailList;
 
     // Fold outs ------------
     // Fold out for the random hieght generation properties
@@ -86,6 +94,8 @@ public class CustomTerrainEditor : Editor {
     bool showSplatMap = false;
     // Foldout for vegetation generator
     bool showVegetation = false;
+    // Foldout for detail generator
+    bool showDetail = false;
     // Fold out for height map display
     bool showHeightMap = false;
 
@@ -142,6 +152,10 @@ public class CustomTerrainEditor : Editor {
         vegTreeSpacing = serializedObject.FindProperty("vegTreeSpacing");
         vegetationTable = new GUITableState("vegetationTable");
         vegetationList = serializedObject.FindProperty("vegetationList");
+        maxDetails = serializedObject.FindProperty("maxDetails");
+        detailSpacing = serializedObject.FindProperty("detailSpacing");
+        detailTable = new GUITableState("detailTable");
+        detailList = serializedObject.FindProperty("detailList");
 
         heightMapTexture = new Texture2D(513, 513, TextureFormat.ARGB32, false);
     }
@@ -276,6 +290,25 @@ public class CustomTerrainEditor : Editor {
             EditorGUILayout.EndHorizontal();
 
             if (GUILayout.Button("Generate Vegetation")) terrain.PlaceVegetation();
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        showDetail = EditorGUILayout.Foldout(showDetail, "DetailGenProps");
+        if (showDetail)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Generate Detail", EditorStyles.boldLabel);
+            EditorGUILayout.IntSlider(vegMaxTrees, 0, 10000, new GUIContent("Max Detail"));
+            EditorGUILayout.IntSlider(vegTreeSpacing, 2, 20, new GUIContent("Detail Spacing"));
+            detailTable = GUITableLayout.DrawTable(detailTable, serializedObject.FindProperty("detailList"));
+
+            GUILayout.Space(20);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("+")) terrain.AddNewDetails();
+            if (GUILayout.Button("-")) terrain.RemoveDetails();
+            EditorGUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Generate Details")) terrain.PlaceDetails();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);

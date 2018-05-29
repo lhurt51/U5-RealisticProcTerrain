@@ -110,6 +110,30 @@ public class CustomTerrain : MonoBehaviour {
         new Vegetation()
     };
 
+    // Details -----------------------------------------------------
+    public int maxDetails = 5000;
+    public int detailSpacing = 5;
+
+    [System.Serializable]
+    public class Detail
+    {
+        public GameObject prototype = null;
+        public Texture2D prototypeTexture = null;
+        public float minHeight = 0.1f;
+        public float maxHeight = 0.2f;
+        public float minSlope = 0.0f;
+        public float maxSlope = 70.0f;
+        public float overlap = 0.01f;
+        public float feather = 0.05f;
+        public float density = 0.5f;
+        public bool remove = false;
+    }
+
+    public List<Detail> detailList = new List<Detail>()
+    {
+        new Detail()
+    };
+
     // Smooth Algo -------------------------------------------------
     public int smoothAmount = 5;
 
@@ -309,8 +333,8 @@ public class CustomTerrain : MonoBehaviour {
             }
         }
 
-        // If there is nothing in the list. Add the first perlin parameter back to the list
-        if (keptPerlinParameters.Count == 0) keptPerlinParameters.Add(new PerlinParameters());
+        // If there is nothing in the list. Add a new perlin paramater back to the list
+        if (keptPerlinParameters.Count == 0) AddNewPerlin();
         perlinParameters = keptPerlinParameters;
     }
 
@@ -481,7 +505,7 @@ public class CustomTerrain : MonoBehaviour {
             if (!splatHeights[i].remove) keptSplatHeights.Add(splatHeights[i]);
         }
         // Must keep atleast one thing in the array
-        if (keptSplatHeights.Count == 0) keptSplatHeights.Add(new SplatHeights());
+        if (keptSplatHeights.Count == 0) AddNewSplatHeight();
         splatHeights = keptSplatHeights;
     }
 
@@ -544,7 +568,7 @@ public class CustomTerrain : MonoBehaviour {
             if (!vegetationList[i].remove) keptVegetation.Add(vegetationList[i]);
         }
         // Must keep atleast one thing in the array
-        if (keptVegetation.Count == 0) keptVegetation.Add(new Vegetation());
+        if (keptVegetation.Count == 0) AddNewVegetation();
         vegetationList = keptVegetation;
     }
 
@@ -610,6 +634,67 @@ public class CustomTerrain : MonoBehaviour {
         }
         TREESDONE:
             terrainData.treeInstances = allVeg.ToArray();
+    }
+
+    public void AddNewDetails()
+    {
+        detailList.Add(new Detail());
+    }
+
+    public void RemoveDetails()
+    {
+        List<Detail> keptDetails = new List<Detail>();
+
+        for (int i = 0; i < detailList.Count; i++)
+        {
+            if (!detailList[i].remove) keptDetails.Add(detailList[i]);
+        }
+        // If there is nothing in the list. Add a new detail back to the list
+        if (keptDetails.Count == 0) AddNewDetails();
+        detailList = keptDetails;
+    }
+
+    public void PlaceDetails()
+    {
+        int dindex = 0;
+        DetailPrototype[] newDetailPrototypes;
+
+        newDetailPrototypes = new DetailPrototype[detailList.Count];
+        foreach(Detail d in detailList)
+        {
+            newDetailPrototypes[dindex] = new DetailPrototype();
+            newDetailPrototypes[dindex].prototype = d.prototype;
+            newDetailPrototypes[dindex].prototypeTexture = d.prototypeTexture;
+            newDetailPrototypes[dindex].healthyColor = Color.white;
+            if (newDetailPrototypes[dindex].prototype)
+            {
+                newDetailPrototypes[dindex].usePrototypeMesh = true;
+                newDetailPrototypes[dindex].renderMode = DetailRenderMode.VertexLit;
+            }
+            else
+            {
+                newDetailPrototypes[dindex].usePrototypeMesh = false;
+                newDetailPrototypes[dindex].renderMode = DetailRenderMode.GrassBillboard;
+            }
+            dindex++;
+        }
+        terrainData.detailPrototypes = newDetailPrototypes;
+
+        for (int i = 0; i < terrainData.detailPrototypes.Length; i++)
+        {
+            int[,] detailMap = new int[terrainData.detailWidth, terrainData.detailHeight];
+
+            for (int y = 0; y < terrainData.detailHeight; y += detailSpacing)
+            {
+                for (int x = 0; x < terrainData.detailWidth; x += detailSpacing)
+                {
+                    if (UnityEngine.Random.Range(0.0f, 1.0f) > detailList[i].density) continue;
+
+                    detailMap[y, x] = 1;
+                }
+            }
+            terrainData.SetDetailLayer(0, 0, i, detailMap);
+        }
     }
 
     public void ResetTerrain()
