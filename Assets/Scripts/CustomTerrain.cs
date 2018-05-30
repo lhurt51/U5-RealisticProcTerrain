@@ -335,6 +335,29 @@ public class CustomTerrain : MonoBehaviour {
         EditorUtility.ClearProgressBar();
     }
 
+    private float[,] RunRiver(Vector3 dropletPos, float[,] heightMap, float[,] erosionMap, int width, int height)
+    {
+        while (erosionMap[(int)dropletPos.x, (int)dropletPos.y] > 0)
+        {
+            List<Vector2> neighbours = GenerateNeighbours(dropletPos, width, height);
+            bool foundLower = false;
+
+            neighbours.Shuffle();
+            foreach (Vector2 n in neighbours)
+            {
+                if (heightMap[(int)n.x, (int)n.y] < heightMap[(int)dropletPos.x, (int)dropletPos.y])
+                {
+                    erosionMap[(int)n.x, (int)n.y] = erosionMap[(int)dropletPos.x, (int)dropletPos.y] - erosionSolubility;
+                    dropletPos = n;
+                    foundLower = true;
+                    break;
+                }
+            }
+            if (!foundLower) erosionMap[(int)dropletPos.x, (int)dropletPos.y] -= erosionSolubility;
+        }
+        return erosionMap;
+    }
+
     // Public Class Methods ------------------------------------------
     public float[,] GetHeightMap()
     {
@@ -848,7 +871,26 @@ public class CustomTerrain : MonoBehaviour {
 
     public void Tidal()
     {
+        float[,] heightMap = GetHeightMap();
 
+        for (int y = 0; y < terrainData.heightmapHeight; y++)
+        {
+            for (int x = 0; x < terrainData.heightmapWidth; x++)
+            {
+                Vector2 thisLoc = new Vector2(x, y);
+                List<Vector2> neighbours = GenerateNeighbours(thisLoc, terrainData.heightmapWidth, terrainData.heightmapHeight);
+
+                foreach (Vector2 n in neighbours)
+                {
+                    if (heightMap[x, y] < waterHeight && heightMap[(int)n.x, (int)n.y] > waterHeight)
+                    {
+                        heightMap[x, y] = waterHeight;
+                        heightMap[(int)n.x, (int)n.y] = waterHeight;
+                    }
+                }
+            }
+        }
+        terrainData.SetHeights(0, 0, heightMap);
     }
 
     public void Thermal()
@@ -874,13 +916,33 @@ public class CustomTerrain : MonoBehaviour {
                 }
             }
         }
-
         terrainData.SetHeights(0, 0, heightMap);
     }
 
     public void River()
     {
+        float[,] heightMap = GetHeightMap();
+        float[,] erosionMap = new float[terrainData.heightmapWidth, terrainData.heightmapHeight];
 
+        for (int i = 0; i < erosionDroplets; i++)
+        {
+            Vector2 dropletPos = new Vector2(UnityEngine.Random.Range(0, terrainData.heightmapWidth), UnityEngine.Random.Range(0, terrainData.heightmapHeight));
+
+            erosionMap[(int)dropletPos.x, (int)dropletPos.y] = erosionStrength;
+            for (int j = 0; j < erosionsRiverSprings; j++)
+            {
+                erosionMap = RunRiver(dropletPos, heightMap, erosionMap, terrainData.heightmapWidth, terrainData.heightmapHeight);
+            }
+        }
+
+        for (int y = 0; y < terrainData.heightmapHeight; y++)
+        {
+            for (int x = 0; x < terrainData.heightmapWidth; x++)
+            {
+                if (erosionMap[x, y] > 0.0f) heightMap[x, y] -= erosionMap[x, y];
+            }
+        }
+        terrainData.SetHeights(0, 0, heightMap);
     }
 
     public void Wind()
