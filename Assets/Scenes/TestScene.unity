@@ -273,25 +273,25 @@ MonoBehaviour:
     splatNoiseVScale: {x: 0.01, y: 0.01}
     splatNoiseScaler: 0.05
     remove: 0
-  vegMaxTrees: 0
-  vegTreeSpacing: 3
+  vegMaxTrees: 5000
+  vegTreeSpacing: 4
   vegetationList:
   - mesh: {fileID: 100000, guid: 43202a31bd1113061100b7a844295342, type: 3}
     minHeight: 0
-    maxHeight: 0
-    minSlope: 30
-    maxSlope: 60
+    maxHeight: 1
+    minSlope: 0
+    maxSlope: 50
     minScale: 0.8
     maxScale: 2
     minRotation: 0
     maxRotation: 360
-    density: 0.5
+    density: 0.1
     color1: {r: 0.96930236, g: 0.9716981, b: 0.01375042, a: 1}
     color2: {r: 0.9811321, g: 0.060262866, b: 0.032395888, a: 1}
     lightColor: {r: 0.9811321, g: 0.90463936, b: 0, a: 1}
     remove: 0
   maxDetails: 4019
-  detailSpacing: 5
+  detailSpacing: 2
   detailList:
   - prototype: {fileID: 100000, guid: 8e41f14c6552d48e6a7992aaecc808e4, type: 3}
     prototypeTexture: {fileID: 0}
@@ -299,9 +299,14 @@ MonoBehaviour:
     maxHeight: 0.15
     minSlope: 0
     maxSlope: 35
+    noiseSpread: 0.5
     overlap: 0.01
     feather: 0.05
     density: 0.01
+    dryColor: {r: 0.9890018, g: 0.98589355, b: 0.990566, a: 1}
+    healthyColor: {r: 1, g: 1, b: 1, a: 1}
+    heightRange: {x: 1, y: 2}
+    widthRange: {x: 1, y: 2}
     remove: 0
   - prototype: {fileID: 0}
     prototypeTexture: {fileID: 2800000, guid: ba0dbc11bd11158b1100de1b44295342, type: 3}
@@ -309,9 +314,14 @@ MonoBehaviour:
     maxHeight: 0.05
     minSlope: 0
     maxSlope: 45
+    noiseSpread: 0.3
     overlap: 0.025
     feather: 0.5
     density: 1
+    dryColor: {r: 0.66135705, g: 0.033018887, b: 1, a: 1}
+    healthyColor: {r: 0.990566, g: 0.89010054, b: 0.0046724924, a: 1}
+    heightRange: {x: 1, y: 4}
+    widthRange: {x: 1, y: 3}
     remove: 0
   smoothAmount: 5
   resetBeforeGen: 0
@@ -455,8 +465,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2032955997}
-  m_LocalRotation: {x: -0.16013126, y: -0.0014406877, z: 0.00023106264, w: -0.98709464}
-  m_LocalPosition: {x: 4.720536, y: 4.156438, z: 156.28781}
+  m_LocalRotation: {x: 0.086967655, y: 0.32435396, z: -0.029969256, w: 0.94145256}
+  m_LocalPosition: {x: 126.33673, y: 8.818062, z: 128.89453}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

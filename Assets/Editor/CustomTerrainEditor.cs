@@ -74,6 +74,10 @@ public class CustomTerrainEditor : Editor {
     GUITableState detailTable;
     // The details list that we want to display
     SerializedProperty detailList;
+    // The height that we want our water to be at from 0 to 1
+    SerializedProperty waterHeight;
+    // The game object we will use to place our water object
+    SerializedProperty waterGO;
 
     // Fold outs ------------
     // Fold out for the random hieght generation properties
@@ -96,6 +100,8 @@ public class CustomTerrainEditor : Editor {
     bool showVegetation = false;
     // Foldout for detail generator
     bool showDetail = false;
+    // Foldout for water generator
+    bool showWater = false;
     // Fold out for height map display
     bool showHeightMap = false;
 
@@ -156,6 +162,8 @@ public class CustomTerrainEditor : Editor {
         detailSpacing = serializedObject.FindProperty("detailSpacing");
         detailTable = new GUITableState("detailTable");
         detailList = serializedObject.FindProperty("detailList");
+        waterHeight = serializedObject.FindProperty("waterHeight");
+        waterGO = serializedObject.FindProperty("waterGO");
 
         heightMapTexture = new Texture2D(513, 513, TextureFormat.ARGB32, false);
     }
@@ -310,6 +318,19 @@ public class CustomTerrainEditor : Editor {
             EditorGUILayout.EndHorizontal();
 
             if (GUILayout.Button("Generate Details")) terrain.PlaceDetails();
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        showWater = EditorGUILayout.Foldout(showWater, "WaterGenProps");
+        if (showWater)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Generate Water", EditorStyles.boldLabel);
+
+            EditorGUILayout.Slider(waterHeight, 0.0f, 1.0f, new GUIContent("Water Height"));
+            EditorGUILayout.PropertyField(waterGO);
+
+            if (GUILayout.Button("Add Water")) terrain.AddWater();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
