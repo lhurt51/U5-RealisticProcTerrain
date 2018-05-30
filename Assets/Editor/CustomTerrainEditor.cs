@@ -78,6 +78,8 @@ public class CustomTerrainEditor : Editor {
     SerializedProperty waterHeight;
     // The game object we will use to place our water object
     SerializedProperty waterGO;
+    // The material we will use for our shoreline animations
+    SerializedProperty shoreLineMat;
 
     // Fold outs ------------
     // Fold out for the random hieght generation properties
@@ -164,6 +166,7 @@ public class CustomTerrainEditor : Editor {
         detailList = serializedObject.FindProperty("detailList");
         waterHeight = serializedObject.FindProperty("waterHeight");
         waterGO = serializedObject.FindProperty("waterGO");
+        shoreLineMat = serializedObject.FindProperty("shoreLineMat");
 
         heightMapTexture = new Texture2D(513, 513, TextureFormat.ARGB32, false);
     }
@@ -329,8 +332,10 @@ public class CustomTerrainEditor : Editor {
 
             EditorGUILayout.Slider(waterHeight, 0.0f, 1.0f, new GUIContent("Water Height"));
             EditorGUILayout.PropertyField(waterGO);
-
             if (GUILayout.Button("Add Water")) terrain.AddWater();
+
+            EditorGUILayout.PropertyField(shoreLineMat);
+            if (GUILayout.Button("Add Shore")) terrain.DrawShoreLine();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);

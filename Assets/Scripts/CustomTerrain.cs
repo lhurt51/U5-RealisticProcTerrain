@@ -142,6 +142,7 @@ public class CustomTerrain : MonoBehaviour {
     // Water -------------------------------------------------------
     public float waterHeight = 0.5f;
     public GameObject waterGO;
+    public Material shoreLineMat;
 
     // Smooth Algo -------------------------------------------------
     public int smoothAmount = 5;
@@ -733,6 +734,35 @@ public class CustomTerrain : MonoBehaviour {
         }
         water.transform.position = this.transform.position + new Vector3(terrainData.size.x / 2.0f, waterHeight * terrainData.size.y, terrainData.size.z / 2.0f);
         water.transform.localScale = new Vector3(terrainData.size.x, 1.0f, terrainData.size.z);
+    }
+
+    public void DrawShoreLine()
+    {
+        GameObject quads = new GameObject("QUADS");
+        float[,] heightMap = GetHeightMap();
+
+        for (int y = 0; y < terrainData.heightmapHeight; y++)
+        {
+            for (int x = 0; x < terrainData.heightmapWidth; x++)
+            {
+                // Find a spot on the shore
+                Vector2 thisLoc = new Vector2(x, y);
+                List<Vector2> neighbours = GenerateNeighbours(thisLoc, terrainData.heightmapWidth, terrainData.heightmapHeight);
+
+                foreach (Vector2 n in neighbours)
+                {
+                    if (heightMap[x, y] < waterHeight && heightMap[(int)n.x, (int)n.y] > waterHeight)
+                    {
+                        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                        go.transform.position = this.transform.position + new Vector3(y / (float)terrainData.heightmapHeight * terrainData.size.z, waterHeight * terrainData.size.y, x / (float)terrainData.heightmapWidth * terrainData.size.x);
+                        go.transform.Rotate(90.0f, 0.0f, 0.0f);
+                        go.transform.localScale *= 20.0f;
+                        go.tag = "Shore";
+                        go.transform.parent = quads.transform;
+                    }
+                }
+            }
+        }
     }
 
     public void ResetTerrain()
