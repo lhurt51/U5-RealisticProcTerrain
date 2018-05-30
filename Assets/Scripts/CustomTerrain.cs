@@ -738,7 +738,6 @@ public class CustomTerrain : MonoBehaviour {
 
     public void DrawShoreLine()
     {
-        GameObject quads = new GameObject("QUADS");
         float[,] heightMap = GetHeightMap();
 
         for (int y = 0; y < terrainData.heightmapHeight; y++)
@@ -755,14 +754,52 @@ public class CustomTerrain : MonoBehaviour {
                     {
                         GameObject go = GameObject.CreatePrimitive(PrimitiveType.Quad);
                         go.transform.position = this.transform.position + new Vector3(y / (float)terrainData.heightmapHeight * terrainData.size.z, waterHeight * terrainData.size.y, x / (float)terrainData.heightmapWidth * terrainData.size.x);
+                        go.transform.LookAt(new Vector3(n.y / (float)terrainData.heightmapHeight * terrainData.size.z, waterHeight * terrainData.size.y, n.x / (float)terrainData.heightmapWidth * terrainData.size.x));
                         go.transform.Rotate(90.0f, 0.0f, 0.0f);
-                        go.transform.localScale *= 20.0f;
+                        go.transform.localScale *= 25.0f;
                         go.tag = "Shore";
-                        go.transform.parent = quads.transform;
                     }
                 }
             }
         }
+
+        GameObject[] shoreQuads = GameObject.FindGameObjectsWithTag("Shore");
+        MeshFilter[] meshFilters = new MeshFilter[shoreQuads.Length];
+
+        for (int m = 0; m < shoreQuads.Length; m++)
+        {
+            meshFilters[m] = shoreQuads[m].GetComponent<MeshFilter>();
+        }
+
+        int i = 0;
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        while (i < meshFilters.Length)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            meshFilters[i].gameObject.active = false;
+            i++;
+        }
+
+        GameObject curShoreLine = GameObject.Find("ShoreLine");
+
+        if (curShoreLine) DestroyImmediate(curShoreLine);
+
+        GameObject shoreLine = new GameObject();
+        shoreLine.name = "ShoreLine";
+        shoreLine.AddComponent<WaveAnimation>();
+        shoreLine.transform.position = this.transform.position;
+        shoreLine.transform.rotation = this.transform.rotation;
+
+        MeshFilter thisMF = shoreLine.AddComponent<MeshFilter>();
+        thisMF.mesh = new Mesh();
+        shoreLine.GetComponent<MeshFilter>().sharedMesh.CombineMeshes(combine);
+
+        MeshRenderer r = shoreLine.AddComponent<MeshRenderer>();
+        r.sharedMaterial = shoreLineMat;
+
+        for (int sQ = 0; sQ < shoreQuads.Length; sQ++) DestroyImmediate(shoreQuads[sQ]);
     }
 
     public void ResetTerrain()
