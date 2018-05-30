@@ -163,6 +163,7 @@ public class CustomTerrain : MonoBehaviour {
 
     public ErosionType erosionType = ErosionType.Rain;
     public float erosionStrength = 0.1f;
+    public float erosionAmount = 0.01f;
     public float erosionSolubility = 0.01f;
     public int erosionDroplets = 10;
     public int erosionsRiverSprings = 5;
@@ -852,7 +853,29 @@ public class CustomTerrain : MonoBehaviour {
 
     public void Thermal()
     {
+        float[,] heightMap = GetHeightMap();
 
+        for (int y = 0; y < terrainData.heightmapHeight; y++)
+        {
+            for (int x = 0; x < terrainData.heightmapWidth; x++)
+            {
+                Vector2 thisLoc = new Vector2(x, y);
+                List<Vector2> neighbours = GenerateNeighbours(thisLoc, terrainData.heightmapWidth, terrainData.heightmapHeight);
+
+                foreach (Vector2 n in neighbours)
+                {
+                    if (heightMap[x, y] > heightMap[(int)n.x, (int)n.y] + erosionStrength)
+                    {
+                        float curHeight = heightMap[x, y];
+
+                        heightMap[x, y] -= curHeight * erosionAmount;
+                        heightMap[(int)n.x, (int)n.y] += curHeight * erosionAmount;
+                    }
+                }
+            }
+        }
+
+        terrainData.SetHeights(0, 0, heightMap);
     }
 
     public void River()
