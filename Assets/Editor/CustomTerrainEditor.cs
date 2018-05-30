@@ -80,6 +80,18 @@ public class CustomTerrainEditor : Editor {
     SerializedProperty waterGO;
     // The material we will use for our shoreline animations
     SerializedProperty shoreLineMat;
+    // The type of erosion we will use for our erosion method
+    SerializedProperty erosionType;
+    // The strength of erosion we will use for our erosion method
+    SerializedProperty erosionStrength;
+    // The solubility of erosion we will use for our erosion method
+    SerializedProperty erosionSolubility;
+    // The amount of rain drops we will use for our erosion method
+    SerializedProperty erosionDroplets;
+    // The amount of river springs we will use for our erosion method
+    SerializedProperty erosionsRiverSprings;
+    // The amount of smoothing we will use for our erosion method
+    SerializedProperty erosionSmoothAmount;
 
     // Fold outs ------------
     // Fold out for the random hieght generation properties
@@ -104,6 +116,8 @@ public class CustomTerrainEditor : Editor {
     bool showDetail = false;
     // Foldout for water generator
     bool showWater = false;
+    // Foldout for erosion
+    bool showErosion = false;
     // Fold out for height map display
     bool showHeightMap = false;
 
@@ -131,8 +145,10 @@ public class CustomTerrainEditor : Editor {
     void OnEnable()
     {
         randomHeightRange = serializedObject.FindProperty("randomHeightRange");
+
         heightMapScale = serializedObject.FindProperty("heightMapScale");
         heightMapImage = serializedObject.FindProperty("heightMapImage");
+
         perlinXScale = serializedObject.FindProperty("perlinXScale");
         perlinYScale = serializedObject.FindProperty("perlinYScale");
         perlinOffsetX = serializedObject.FindProperty("perlinOffsetX");
@@ -140,33 +156,49 @@ public class CustomTerrainEditor : Editor {
         perlinOctaves = serializedObject.FindProperty("perlinOctaves");
         perlinPersistance = serializedObject.FindProperty("perlinPersistance");
         perlinHeightScale = serializedObject.FindProperty("perlinHeightScale");
+
         voronoiPeaks = serializedObject.FindProperty("voronoiPeaks");
         voronoiMinHeight = serializedObject.FindProperty("voronoiMinHeight");
         voronoiMaxHeight = serializedObject.FindProperty("voronoiMaxHeight");
         voronoiFallOff = serializedObject.FindProperty("voronoiFallOff");
         voronoiDropOff = serializedObject.FindProperty("voronoiDropOff");
         voronoiType = serializedObject.FindProperty("voronoiType");
+
         MPDHeightMin = serializedObject.FindProperty("MPDHeightMin");
         MPDHeightMax = serializedObject.FindProperty("MPDHeightMax");
         MPDHeightDampenerPower = serializedObject.FindProperty("MPDHeightDampenerPower");
         MPDRoughness = serializedObject.FindProperty("MPDRoughness");
-        smoothAmount = serializedObject.FindProperty("smoothAmount");
-        resetBeforeGen = serializedObject.FindProperty("resetBeforeGen");
+
         perlinParameterTable = new GUITableState("perlinParameterTable");
         perlinParameters = serializedObject.FindProperty("perlinParameters");
+
         splatMapTable = new GUITableState("splatMapTable");
         splatHeights = serializedObject.FindProperty("splatHeights");
+
         vegMaxTrees = serializedObject.FindProperty("vegMaxTrees");
         vegTreeSpacing = serializedObject.FindProperty("vegTreeSpacing");
         vegetationTable = new GUITableState("vegetationTable");
         vegetationList = serializedObject.FindProperty("vegetationList");
+
         maxDetails = serializedObject.FindProperty("maxDetails");
         detailSpacing = serializedObject.FindProperty("detailSpacing");
         detailTable = new GUITableState("detailTable");
         detailList = serializedObject.FindProperty("detailList");
+
         waterHeight = serializedObject.FindProperty("waterHeight");
         waterGO = serializedObject.FindProperty("waterGO");
         shoreLineMat = serializedObject.FindProperty("shoreLineMat");
+
+        erosionType = serializedObject.FindProperty("erosionType");
+        erosionStrength = serializedObject.FindProperty("erosionStrength");
+        erosionSolubility = serializedObject.FindProperty("erosionSolubility");
+        erosionDroplets = serializedObject.FindProperty("erosionDroplets");
+        erosionsRiverSprings = serializedObject.FindProperty("erosionsRiverSprings");
+        erosionSmoothAmount = serializedObject.FindProperty("erosionSmoothAmount");
+
+        smoothAmount = serializedObject.FindProperty("smoothAmount");
+
+        resetBeforeGen = serializedObject.FindProperty("resetBeforeGen");
 
         heightMapTexture = new Texture2D(513, 513, TextureFormat.ARGB32, false);
     }
@@ -339,13 +371,30 @@ public class CustomTerrainEditor : Editor {
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        showErosion = EditorGUILayout.Foldout(showErosion, "ErosionProps");
+        if (showErosion)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Erode Landscape", EditorStyles.boldLabel);
+
+            EditorGUILayout.PropertyField(erosionType);
+            EditorGUILayout.Slider(erosionStrength, 0.0f, 1.0f, new GUIContent("Erosion Strength"));
+            EditorGUILayout.Slider(erosionSolubility, 0.001f, 1.0f, new GUIContent("Solubility"));
+            EditorGUILayout.IntSlider(erosionDroplets, 0, 500, new GUIContent("Droplets"));
+            EditorGUILayout.IntSlider(erosionsRiverSprings, 0, 20, new GUIContent("Springs Per River"));
+            EditorGUILayout.IntSlider(erosionSmoothAmount, 0, 10, new GUIContent("Smooth Amount"));
+
+            if (GUILayout.Button("Erode")) terrain.Erode();
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         showSmooth = EditorGUILayout.Foldout(showSmooth, "SmoothProps");
         if (showSmooth)
         {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             GUILayout.Label("Smooth The Terrain", EditorStyles.boldLabel);
             EditorGUILayout.IntSlider(smoothAmount, 1, 10, new GUIContent("Smooth Amount"));
-            if (GUILayout.Button("Smooth")) terrain.Smooth();
+            if (GUILayout.Button("Smooth")) terrain.SmoothTerrain();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);

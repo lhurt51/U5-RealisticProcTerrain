@@ -46,12 +46,19 @@ public class CustomTerrain : MonoBehaviour {
     };
 
     // Voronoi noise -----------------------------------------------
+    public enum VoronoiType
+    {
+        Linear = 0,
+        Power = 1,
+        Combined = 2,
+        SinPow = 3
+    }
+
     public int voronoiPeaks = 5;
     public float voronoiMinHeight = 0.0f;
     public float voronoiMaxHeight = 1.0f;
     public float voronoiFallOff = 0.2f;
     public float voronoiDropOff = 0.6f;
-    public enum VoronoiType { Linear = 0, Power = 1, Combined = 2, SinPow = 3 }
     public VoronoiType voronoiType = VoronoiType.Linear;
 
     // Midpoint Displacement ---------------------------------------
@@ -144,16 +151,38 @@ public class CustomTerrain : MonoBehaviour {
     public GameObject waterGO;
     public Material shoreLineMat;
 
+    // Erosion -----------------------------------------------------
+    public enum ErosionType
+    {
+        Rain = 0,
+        Thermal = 1,
+        Tidal = 2,
+        River = 3,
+        Wind = 4,
+    }
+
+    public ErosionType erosionType = ErosionType.Rain;
+    public float erosionStrength = 0.1f;
+    public float erosionSolubility = 0.01f;
+    public int erosionDroplets = 10;
+    public int erosionsRiverSprings = 5;
+    public int erosionSmoothAmount = 5;
+
     // Smooth Algo -------------------------------------------------
     public int smoothAmount = 5;
 
     // Should it reset the terrain before generating a new height map
     public bool resetBeforeGen;
 
+    // Terrain Settings For Raycasting -----------------------------
     [SerializeField]
     int terrainLayer = -1;
 
-    public enum TagType { Tag = 0, Layer = 1 }
+    public enum TagType
+    {
+        Tag = 0,
+        Layer = 1
+    }
 
     // Private Class Methods ----------------------------------------
     private int AddTag(SerializedProperty tagsProp, string newTag, TagType tagType)
@@ -275,6 +304,36 @@ public class CustomTerrain : MonoBehaviour {
         return steep;
     }
 
+    private void Smooth(int thisSmoothAmount)
+    {
+        float[,] heightMap = GetHeightMap();
+        float smoothProgress = 0;
+        EditorUtility.DisplayProgressBar("Smoothing Terrain", "Progress", smoothProgress);
+
+        for (int i = 0; i < thisSmoothAmount; i++)
+        {
+            for (int y = 0; y < terrainData.heightmapHeight; y++)
+            {
+                for (int x = 0; x < terrainData.heightmapWidth; x++)
+                {
+                    float avgHeight = heightMap[x, y];
+                    List<Vector2> neighbours = GenerateNeighbours(new Vector2(x, y), terrainData.heightmapWidth, terrainData.heightmapHeight);
+
+                    foreach (Vector2 n in neighbours)
+                    {
+                        avgHeight += heightMap[(int)n.x, (int)n.y];
+                    }
+
+                    heightMap[x, y] = avgHeight / ((float)neighbours.Count + 1);
+                }
+            }
+            smoothProgress++;
+            EditorUtility.DisplayProgressBar("Smoothing Terrain", "Progress", smoothProgress / thisSmoothAmount);
+        }
+        terrainData.SetHeights(0, 0, heightMap);
+        EditorUtility.ClearProgressBar();
+    }
+
     // Public Class Methods ------------------------------------------
     public float[,] GetHeightMap()
     {
@@ -337,14 +396,11 @@ public class CustomTerrain : MonoBehaviour {
 
         for (int i = 0; i < perlinParameters.Count; i++)
         {
-            if (!perlinParameters[i].remove)
-            {
-                keptPerlinParameters.Add(perlinParameters[i]);
-            }
+            if (!perlinParameters[i].remove) keptPerlinParameters.Add(perlinParameters[i]);
         }
 
         // If there is nothing in the list. Add a new perlin paramater back to the list
-        if (keptPerlinParameters.Count == 0) AddNewPerlin();
+        if (keptPerlinParameters.Count == 0) keptPerlinParameters.Add(perlinParameters[0]);
         perlinParameters = keptPerlinParameters;
     }
 
@@ -471,34 +527,9 @@ public class CustomTerrain : MonoBehaviour {
         terrainData.SetHeights(0, 0, heightMap);
     }
 
-    public void Smooth()
+    public void SmoothTerrain()
     {
-        float[,] heightMap = GetHeightMap();
-        float smoothProgress = 0;
-        EditorUtility.DisplayProgressBar("Smoothing Terrain", "Progress", smoothProgress);
-
-        for (int i = 0; i < smoothAmount; i++)
-        {
-            for (int y = 0; y < terrainData.heightmapHeight; y++)
-            {
-                for (int x = 0; x < terrainData.heightmapWidth; x++)
-                {
-                    float avgHeight = heightMap[x, y];
-                    List<Vector2> neighbours = GenerateNeighbours(new Vector2(x, y), terrainData.heightmapWidth, terrainData.heightmapHeight);
-
-                    foreach (Vector2 n in neighbours)
-                    {
-                        avgHeight += heightMap[(int)n.x, (int)n.y];
-                    }
-
-                    heightMap[x, y] = avgHeight / ((float)neighbours.Count + 1);
-                }
-            }
-            smoothProgress++;
-            EditorUtility.DisplayProgressBar("Smoothing Terrain", "Progress", smoothProgress / smoothAmount);
-        }
-        terrainData.SetHeights(0, 0, heightMap);
-        EditorUtility.ClearProgressBar();
+        Smooth(smoothAmount);
     }
 
     public void AddNewSplatHeight()
@@ -515,7 +546,7 @@ public class CustomTerrain : MonoBehaviour {
             if (!splatHeights[i].remove) keptSplatHeights.Add(splatHeights[i]);
         }
         // Must keep atleast one thing in the array
-        if (keptSplatHeights.Count == 0) AddNewSplatHeight();
+        if (keptSplatHeights.Count == 0) keptSplatHeights.Add(splatHeights[0]);
         splatHeights = keptSplatHeights;
     }
 
@@ -578,7 +609,7 @@ public class CustomTerrain : MonoBehaviour {
             if (!vegetationList[i].remove) keptVegetation.Add(vegetationList[i]);
         }
         // Must keep atleast one thing in the array
-        if (keptVegetation.Count == 0) AddNewVegetation();
+        if (keptVegetation.Count == 0) keptVegetation.Add(vegetationList[0]);
         vegetationList = keptVegetation;
     }
 
@@ -660,7 +691,7 @@ public class CustomTerrain : MonoBehaviour {
             if (!detailList[i].remove) keptDetails.Add(detailList[i]);
         }
         // If there is nothing in the list. Add a new detail back to the list
-        if (keptDetails.Count == 0) AddNewDetails();
+        if (keptDetails.Count == 0) keptDetails.Add(detailList[0]);
         detailList = keptDetails;
     }
 
@@ -800,6 +831,54 @@ public class CustomTerrain : MonoBehaviour {
         r.sharedMaterial = shoreLineMat;
 
         for (int sQ = 0; sQ < shoreQuads.Length; sQ++) DestroyImmediate(shoreQuads[sQ]);
+    }
+
+    public void Rain()
+    {
+        float[,] heightMap = GetHeightMap();
+
+        for (int i = 0; i < erosionDroplets; i++)
+        {
+            heightMap[UnityEngine.Random.Range(0, terrainData.heightmapWidth), UnityEngine.Random.Range(0, terrainData.heightmapHeight)] -= erosionStrength;
+        }
+
+        terrainData.SetHeights(0, 0, heightMap);
+    }
+
+    public void Tidal()
+    {
+
+    }
+
+    public void Thermal()
+    {
+
+    }
+
+    public void River()
+    {
+
+    }
+
+    public void Wind()
+    {
+
+    }
+
+    public void Erode()
+    {
+        if (erosionType == ErosionType.Rain)
+            Rain();
+        else if (erosionType == ErosionType.Tidal)
+            Tidal();
+        else if (erosionType == ErosionType.Thermal)
+            Thermal();
+        else if (erosionType == ErosionType.River)
+            River();
+        else if (erosionType == ErosionType.Wind)
+            Wind();
+
+        Smooth(erosionSmoothAmount);
     }
 
     public void ResetTerrain()
