@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -259,3 +259,177 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &2088246449
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 2088246452}
+  - component: {fileID: 2088246451}
+  - component: {fileID: 2088246450}
+  - component: {fileID: 2088246453}
+  m_Layer: 9
+  m_Name: Terrain
+  m_TagString: Terrain
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!154 &2088246450
+TerrainCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2088246449}
+  m_Material: {fileID: 0}
+  m_Enabled: 1
+  m_TerrainData: {fileID: 15600000, guid: 04a6edf6779fe264888d2eb5dd6df3be, type: 2}
+  m_EnableTreeColliders: 1
+--- !u!218 &2088246451
+Terrain:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2088246449}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_TerrainData: {fileID: 15600000, guid: 04a6edf6779fe264888d2eb5dd6df3be, type: 2}
+  m_TreeDistance: 2000
+  m_TreeBillboardDistance: 50
+  m_TreeCrossFadeLength: 5
+  m_TreeMaximumFullLODCount: 50
+  m_DetailObjectDistance: 80
+  m_DetailObjectDensity: 1
+  m_HeightmapPixelError: 5
+  m_SplatMapDistance: 1000
+  m_HeightmapMaximumLOD: 0
+  m_CastShadows: 1
+  m_DrawHeightmap: 1
+  m_DrawTreesAndFoliage: 1
+  m_ReflectionProbeUsage: 1
+  m_MaterialType: 0
+  m_LegacySpecular:
+    serializedVersion: 2
+    rgba: 4286545791
+  m_LegacyShininess: 0.078125
+  m_MaterialTemplate: {fileID: 0}
+  m_BakeLightProbesForTrees: 1
+  m_ScaleInLightmap: 0.0512
+  m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
+--- !u!4 &2088246452
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2088246449}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2088246453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2088246449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6eb87350d9b3454995212f9facff8e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrain: {fileID: 2088246451}
+  terrainData: {fileID: 15600000, guid: 04a6edf6779fe264888d2eb5dd6df3be, type: 2}
+  randomHeightRange: {x: 0, y: 0.1}
+  heightMapImage: {fileID: 0}
+  heightMapScale: {x: 1, y: 1, z: 1}
+  perlinXScale: 0.01
+  perlinYScale: 0.01
+  perlinOffsetX: 0
+  perlinOffsetY: 0
+  perlinOctaves: 3
+  perlinPersistance: 8
+  perlinHeightScale: 0.09
+  perlinParameters:
+  - mPerlinXScale: 0.01
+    mPerlinYScale: 0.01
+    mPerlinOffsetX: 0
+    mPerlinOffsetY: 0
+    mPerlinOctaves: 3
+    mPerlinPersistance: 8
+    mPerlinHeightScale: 0.09
+    remove: 0
+  voronoiPeaks: 5
+  voronoiMinHeight: 0
+  voronoiMaxHeight: 1
+  voronoiFallOff: 0.2
+  voronoiDropOff: 0.6
+  voronoiType: 0
+  MPDHeightMin: -2
+  MPDHeightMax: 2
+  MPDHeightDampenerPower: 2
+  MPDRoughness: 2
+  splatHeights:
+  - texture: {fileID: 2800000, guid: c1a90a563817e4539a29463418e6dd66, type: 3}
+    minHeight: 0
+    maxHeight: 1
+    minSlope: 0
+    maxSlope: 90
+    tileOffset: {x: 0, y: 0}
+    tileSize: {x: 50, y: 50}
+    splatBlendOffset: 0.01
+    splatNoiseVScale: {x: 0.01, y: 0.01}
+    splatNoiseScaler: 0.1
+    remove: 0
+  vegMaxTrees: 5000
+  vegTreeSpacing: 5
+  vegetationList:
+  - mesh: {fileID: 0}
+    minHeight: 0.1
+    maxHeight: 0.2
+    minSlope: 0
+    maxSlope: 70
+    minScale: 0.5
+    maxScale: 1.2
+    minRotation: 0
+    maxRotation: 360
+    density: 0.5
+    color1: {r: 1, g: 1, b: 1, a: 1}
+    color2: {r: 1, g: 1, b: 1, a: 1}
+    lightColor: {r: 1, g: 1, b: 1, a: 1}
+    remove: 0
+  maxDetails: 5000
+  detailSpacing: 5
+  detailList:
+  - prototype: {fileID: 0}
+    prototypeTexture: {fileID: 0}
+    minHeight: 0.1
+    maxHeight: 0.2
+    minSlope: 0
+    maxSlope: 70
+    noiseSpread: 0.5
+    overlap: 0.01
+    feather: 0.05
+    density: 0.5
+    dryColor: {r: 1, g: 1, b: 1, a: 1}
+    healthyColor: {r: 1, g: 1, b: 1, a: 1}
+    heightRange: {x: 1, y: 1}
+    widthRange: {x: 1, y: 1}
+    remove: 0
+  waterHeight: 0.5
+  waterGO: {fileID: 0}
+  shoreLineMat: {fileID: 0}
+  erosionType: 4
+  erosionStrength: 0.8
+  erosionAmount: 0.01
+  erosionSolubility: 0.01
+  erosionDroplets: 10
+  erosionsRiverSprings: 5
+  erosionSmoothAmount: 1
+  smoothAmount: 5
+  resetBeforeGen: 0
+  terrainLayer: 9

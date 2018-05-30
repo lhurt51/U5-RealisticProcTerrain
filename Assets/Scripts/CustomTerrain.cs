@@ -950,20 +950,29 @@ public class CustomTerrain : MonoBehaviour {
         float[,] heightMap = GetHeightMap();
         int width = terrainData.heightmapWidth;
         int height = terrainData.heightmapHeight;
+        float WindDir = 30;
+        float sinAngle = -Mathf.Sin(Mathf.Deg2Rad * WindDir);
+        float cosAngle = Mathf.Cos(Mathf.Deg2Rad * WindDir);
 
-        for (int y = 0; y <= height; y += 10)
+        for (int y = (int)(-(height - 1) * 1.5f); y <= height * 1.5; y += 10)
         {
-            for (int x = 0; x <= width; x += 1)
+            for (int x = -(width - 1); x <= width; x += 1)
             {
                 float thisNoise = (float)Mathf.PerlinNoise(x * 0.06f, y * 0.06f) * 20 * erosionStrength;
                 int nx = (int)x;
                 int ny = (int)y + 5 + (int)thisNoise;
                 int digy = (int)y + (int)thisNoise;
 
-                if (!(nx < 0 || nx > (width - 1) || ny < 0 || ny> (height - 1)))
+                Vector2 digCoords = new Vector2(x * cosAngle - digy * sinAngle, digy * cosAngle + x * sinAngle);
+                Vector2 pileCoords = new Vector2(nx * cosAngle - ny * sinAngle, ny * cosAngle + nx * sinAngle);
+
+                if (!(pileCoords.x < 0 || pileCoords.x > (width - 1) ||
+                    pileCoords.y < 0 || pileCoords.y > (height - 1) ||
+                    digCoords.x < 0 || digCoords.x > (width - 1) ||
+                    digCoords.y < 0 || digCoords.y > (height - 1)))
                 {
-                    heightMap[x, digy] -= 0.001f;
-                    heightMap[nx, ny] += 0.001f;
+                    heightMap[(int)digCoords.x, (int)digCoords.y] -= 0.001f;
+                    heightMap[(int)pileCoords.x, (int)pileCoords.y] += 0.001f;
                 }
             }
         }
