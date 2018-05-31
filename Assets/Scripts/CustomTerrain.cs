@@ -159,6 +159,7 @@ public class CustomTerrain : MonoBehaviour {
         Tidal = 2,
         River = 3,
         Wind = 4,
+        Canyon = 5
     }
 
     public ErosionType erosionType = ErosionType.Rain;
@@ -356,6 +357,29 @@ public class CustomTerrain : MonoBehaviour {
             if (!foundLower) erosionMap[(int)dropletPos.x, (int)dropletPos.y] -= erosionSolubility;
         }
         return erosionMap;
+    }
+
+    private float[,] tempHeightMap;
+
+    private void CanyonCrawler(int x, int y, float height, float slope, float maxDepth)
+    {
+        // Off x axis range of map
+        if (x < 0 || x >= terrainData.heightmapWidth) return;
+        // Off y axis range of map
+        if (y < 0 || y >= terrainData.heightmapWidth) return;
+        // If hit max depth
+        if (height <= maxDepth) return;
+        // If run into lower elevation
+        if (tempHeightMap[x, y] <= height) return;
+
+        tempHeightMap[x, y] = height;
+
+        CanyonCrawler(x + 1, y, height + UnityEngine.Random.Range(slope, slope + 0.01f), slope, maxDepth);
+        CanyonCrawler(x - 1, y, height + UnityEngine.Random.Range(slope, slope + 0.01f), slope, maxDepth);
+        CanyonCrawler(x + 1, y + 1, height + UnityEngine.Random.Range(slope, slope + 0.01f), slope, maxDepth);
+        CanyonCrawler(x - 1, y + 1, height + UnityEngine.Random.Range(slope, slope + 0.01f), slope, maxDepth);
+        CanyonCrawler(x, y - 1, height + UnityEngine.Random.Range(slope, slope + 0.01f), slope, maxDepth);
+        CanyonCrawler(x, y + 1, height + UnityEngine.Random.Range(slope, slope + 0.01f), slope, maxDepth);
     }
 
     // Public Class Methods ------------------------------------------
@@ -979,6 +1003,24 @@ public class CustomTerrain : MonoBehaviour {
         terrainData.SetHeights(0, 0, heightMap);
     }
 
+    public void Canyon()
+    {
+        float digDepth = 0.05f;
+        float bankSlope = 0.001f;
+        float maxDepth = 0;
+        int cx = 1;
+        int cy = UnityEngine.Random.Range(10, terrainData.heightmapHeight - 10);
+
+        tempHeightMap = GetHeightMap();
+        while (cy >= 0 && cy < terrainData.heightmapHeight && cx > 0 && cx < terrainData.heightmapWidth)
+        {
+            CanyonCrawler(cx, cy, tempHeightMap[cx, cy] - digDepth, bankSlope, maxDepth);
+            cx += UnityEngine.Random.Range(1, 3);
+            cy += UnityEngine.Random.Range(-2, 3); 
+        }
+        terrainData.SetHeights(0, 0, tempHeightMap);
+    }
+
     public void Erode()
     {
         if (erosionType == ErosionType.Rain)
@@ -991,6 +1033,8 @@ public class CustomTerrain : MonoBehaviour {
             River();
         else if (erosionType == ErosionType.Wind)
             Wind();
+        else if (erosionType == ErosionType.Canyon)
+            Canyon();
 
         Smooth(erosionSmoothAmount);
     }
