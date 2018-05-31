@@ -170,6 +170,19 @@ public class CustomTerrain : MonoBehaviour {
     public int erosionsRiverSprings = 5;
     public int erosionSmoothAmount = 5;
 
+    // Clouds ------------------------------------------------------
+    public int numClouds = 1;
+    public int particlesPerCloud = 50;
+    public Vector3 cloudScale = new Vector3(1.0f, 1.0f, 1.0f);
+    public Material cloudMat;
+    public Material cloudShadowMat;
+    public Color cloudColor = Color.white;
+    public Color cloudLining = Color.gray;
+    public float cloudStartSize = 5.0f;
+    public float cloudMinSpeed = 0.2f;
+    public float cloudMaxSpeed = 0.5f;
+    public float cloudRange = 500.0f;
+
     // Smooth Algo -------------------------------------------------
     public int smoothAmount = 5;
 
@@ -185,6 +198,10 @@ public class CustomTerrain : MonoBehaviour {
         Tag = 0,
         Layer = 1
     }
+
+    // Private Properties ------------------------------------------
+    // Private height map for the canyon
+    private float[,] tempHeightMap;
 
     // Private Class Methods ----------------------------------------
     private int AddTag(SerializedProperty tagsProp, string newTag, TagType tagType)
@@ -358,8 +375,6 @@ public class CustomTerrain : MonoBehaviour {
         }
         return erosionMap;
     }
-
-    private float[,] tempHeightMap;
 
     private void CanyonCrawler(int x, int y, float height, float slope, float maxDepth)
     {
@@ -1037,6 +1052,36 @@ public class CustomTerrain : MonoBehaviour {
             Canyon();
 
         Smooth(erosionSmoothAmount);
+    }
+
+    public void GenerateClouds()
+    {
+        GameObject cloudManager = GameObject.Find("CloudManager");
+
+        if (!cloudManager)
+        {
+            cloudManager = new GameObject();
+            cloudManager.name = "CloudManager";
+            cloudManager.AddComponent<CloudManager>();
+            cloudManager.transform.position = this.transform.position;
+        }
+
+        GameObject[] allClouds = GameObject.FindGameObjectsWithTag("Cloud");
+        for (int i = 0; i < allClouds.Length; i++) DestroyImmediate(allClouds[i]);
+
+        for (int c = 0; c < numClouds; c++)
+        {
+            GameObject cloudGO = new GameObject();
+
+            cloudGO.name = "Cloud" + c;
+            cloudGO.tag = "Cloud";
+
+            cloudGO.transform.rotation = cloudManager.transform.rotation;
+            cloudGO.transform.position = cloudManager.transform.position;
+
+            cloudGO.transform.parent = cloudManager.transform;
+            cloudGO.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        }
     }
 
     public void ResetTerrain()

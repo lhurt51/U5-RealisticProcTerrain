@@ -9,10 +9,12 @@ public class CustomTerrainEditor : Editor {
     // Properties ----------
     // The height range used for the rand gen
     SerializedProperty randomHeightRange;
+
     // The height map scale used for gen
     SerializedProperty heightMapScale;
     // The height map image used for gen
     SerializedProperty heightMapImage;
+
     // The scaling from height map to perlin on x-axis
     SerializedProperty perlinXScale;
     // The scaling from height map to perlin on y-axis
@@ -27,6 +29,7 @@ public class CustomTerrainEditor : Editor {
     SerializedProperty perlinPersistance;
     // The height scale for the perlin map
     SerializedProperty perlinHeightScale;
+
     // The count for how many peak will be generated
     SerializedProperty voronoiPeaks;
     // The min height for each voronoi peak
@@ -39,6 +42,7 @@ public class CustomTerrainEditor : Editor {
     SerializedProperty voronoiDropOff;
     // If the voronoi type is Combined, Linear, Power
     SerializedProperty voronoiType;
+
     // The min height the MPD can produce
     SerializedProperty MPDHeightMin;
     // The max height the MPD can produce
@@ -46,18 +50,17 @@ public class CustomTerrainEditor : Editor {
     // The height dampener to reduce height over time
     SerializedProperty MPDHeightDampenerPower;
     SerializedProperty MPDRoughness;
-    // How many loops the smooth algo does
-    SerializedProperty smoothAmount;
-    // The boolean to see if the terrain should reset before generating
-    SerializedProperty resetBeforeGen;
+
     // The table for our perlin paramters to display the parameters
     GUITableState perlinParameterTable;
     // The perlin parameters list that we want to display
     SerializedProperty perlinParameters;
+
     // The table for our splat heights to display parameters
     GUITableState splatMapTable;
     // The splat heights list that we want to display
     SerializedProperty splatHeights;
+
     // The maximum amount of trees aloud on the terrain
     SerializedProperty vegMaxTrees;
     // How spaced out the trees will be
@@ -66,6 +69,7 @@ public class CustomTerrainEditor : Editor {
     GUITableState vegetationTable;
     // The vegetation list that we want to display
     SerializedProperty vegetationList;
+
     // The maximum amount of details aloud on the terrain
     SerializedProperty maxDetails;
     // How spaced out the details will be
@@ -74,12 +78,14 @@ public class CustomTerrainEditor : Editor {
     GUITableState detailTable;
     // The details list that we want to display
     SerializedProperty detailList;
+
     // The height that we want our water to be at from 0 to 1
     SerializedProperty waterHeight;
     // The game object we will use to place our water object
     SerializedProperty waterGO;
     // The material we will use for our shoreline animations
     SerializedProperty shoreLineMat;
+
     // The type of erosion we will use for our erosion method
     SerializedProperty erosionType;
     // The strength of erosion we will use for our erosion method
@@ -94,6 +100,35 @@ public class CustomTerrainEditor : Editor {
     SerializedProperty erosionsRiverSprings;
     // The amount of smoothing we will use for our erosion method
     SerializedProperty erosionSmoothAmount;
+
+    // The amount of clouds we will use for cloud gen
+    SerializedProperty numClouds;
+    // The amount of particles we will use for cloud gen
+    SerializedProperty particlesPerCloud;
+    // The scale we will use for cloud gen
+    SerializedProperty cloudScale;
+    // The material we will use for cloud gen
+    SerializedProperty cloudMat;
+    // The material we will use for cloud shadow gen
+    SerializedProperty cloudShadowMat;
+    // The color we will use for cloud gen
+    SerializedProperty cloudColor;
+    // The secondary color we will use for cloud gen
+    SerializedProperty cloudLining;
+    // The start size we will use for cloud gen
+    SerializedProperty cloudStartSize;
+    // The min speed we will use for cloud movement
+    SerializedProperty cloudMinSpeed;
+    // The max speed we will use for cloud movement
+    SerializedProperty cloudMaxSpeed;
+    // The range we will use for cloud movement
+    SerializedProperty cloudRange;
+
+    // How many loops the smooth algo does
+    SerializedProperty smoothAmount;
+
+    // The boolean to see if the terrain should reset before generating
+    SerializedProperty resetBeforeGen;
 
     // Fold outs ------------
     // Fold out for the random hieght generation properties
@@ -120,6 +155,8 @@ public class CustomTerrainEditor : Editor {
     bool showWater = false;
     // Foldout for erosion
     bool showErosion = false;
+    // Foldout for clouds
+    bool showClouds = false;
     // Fold out for height map display
     bool showHeightMap = false;
 
@@ -198,6 +235,18 @@ public class CustomTerrainEditor : Editor {
         erosionDroplets = serializedObject.FindProperty("erosionDroplets");
         erosionsRiverSprings = serializedObject.FindProperty("erosionsRiverSprings");
         erosionSmoothAmount = serializedObject.FindProperty("erosionSmoothAmount");
+
+        numClouds = serializedObject.FindProperty("numClouds");
+        particlesPerCloud = serializedObject.FindProperty("particlesPerCloud");
+        cloudScale = serializedObject.FindProperty("cloudScale");
+        cloudMat = serializedObject.FindProperty("cloudMat");
+        cloudShadowMat = serializedObject.FindProperty("cloudShadowMat");
+        cloudColor = serializedObject.FindProperty("cloudColor");
+        cloudLining = serializedObject.FindProperty("cloudLining");
+        cloudStartSize = serializedObject.FindProperty("cloudStartSize");
+        cloudMinSpeed = serializedObject.FindProperty("cloudMinSpeed");
+        cloudMaxSpeed = serializedObject.FindProperty("cloudMaxSpeed");
+        cloudRange = serializedObject.FindProperty("cloudRange");
 
         smoothAmount = serializedObject.FindProperty("smoothAmount");
 
@@ -389,6 +438,28 @@ public class CustomTerrainEditor : Editor {
             EditorGUILayout.IntSlider(erosionSmoothAmount, 0, 10, new GUIContent("Smooth Amount"));
 
             if (GUILayout.Button("Erode")) terrain.Erode();
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        showClouds = EditorGUILayout.Foldout(showClouds, "CloudProps");
+        if (showClouds)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Generate Clouds In The Sky", EditorStyles.boldLabel);
+
+            EditorGUILayout.PropertyField(numClouds, new GUIContent("Number of Clouds"));
+            EditorGUILayout.PropertyField(particlesPerCloud, new GUIContent("Particles Per Cloud"));
+            EditorGUILayout.PropertyField(cloudScale, new GUIContent("Size"));
+            EditorGUILayout.PropertyField(cloudMat, true);
+            EditorGUILayout.PropertyField(cloudShadowMat, true);
+            EditorGUILayout.PropertyField(cloudColor, new GUIContent("Color"));
+            EditorGUILayout.PropertyField(cloudLining, new GUIContent("Lining"));
+            EditorGUILayout.PropertyField(cloudStartSize, new GUIContent("Cloud Particle Size"));
+            EditorGUILayout.PropertyField(cloudMinSpeed, new GUIContent("Min Speed"));
+            EditorGUILayout.PropertyField(cloudMaxSpeed, new GUIContent("Max Speed"));
+            EditorGUILayout.PropertyField(cloudRange, new GUIContent("Dst Travelled"));
+
+            if (GUILayout.Button("Generate Clouds")) terrain.GenerateClouds();
         }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
