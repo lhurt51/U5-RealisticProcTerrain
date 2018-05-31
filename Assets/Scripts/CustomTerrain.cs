@@ -1072,13 +1072,34 @@ public class CustomTerrain : MonoBehaviour {
         for (int c = 0; c < numClouds; c++)
         {
             GameObject cloudGO = new GameObject();
+            ParticleSystem cloudSystem = cloudGO.AddComponent<ParticleSystem>();
+            CloudController cc = cloudGO.AddComponent<CloudController>();
+            ParticleSystem.MainModule main = cloudSystem.main;
+            Renderer cloudRend = cloudGO.GetComponent<Renderer>();
 
             cloudGO.name = "Cloud" + c;
             cloudGO.tag = "Cloud";
 
+            cloudRend.material = cloudMat;
+            cloudRend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            cloudRend.receiveShadows = false;
+
+            main.loop = false;
+            main.startLifetime = Mathf.Infinity;
+            main.startSpeed = 0;
+            main.startSize = cloudStartSize;
+            main.startColor = Color.white;
+
+            var emission = cloudSystem.emission;
+            emission.rateOverTime = 0;
+            emission.SetBursts(new ParticleSystem.Burst[] { new ParticleSystem.Burst(0.0f, (short)particlesPerCloud) });
+
+            var shape = cloudSystem.shape;
+            shape.shapeType = ParticleSystemShapeType.Sphere;
+            shape.scale = new Vector3(cloudScale.x, cloudScale.y, cloudScale.z);
+
             cloudGO.transform.rotation = cloudManager.transform.rotation;
             cloudGO.transform.position = cloudManager.transform.position;
-
             cloudGO.transform.parent = cloudManager.transform;
             cloudGO.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         }
