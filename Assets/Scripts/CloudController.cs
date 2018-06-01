@@ -30,6 +30,19 @@ public class CloudController : MonoBehaviour {
         speed = UnityEngine.Random.Range(minSpeed, maxSpeed);
     }
 
+    void Paint()
+    {
+        ParticleSystem.Particle[] particles = new ParticleSystem.Particle[cloudSystem.particleCount];
+
+        cloudSystem.GetParticles(particles);
+        if (particles.Length > 0 )
+        {
+            for (int i = 0; i < particles.Length; i++) particles[i].startColor = Color.Lerp(lining, color, particles[i].position.y / cloudSystem.shape.scale.y);
+            painted = true;
+            cloudSystem.SetParticles(particles, particles.Length);
+        }
+    }
+
     // Use this for initialization
     void Start () {
         cloudSystem = this.GetComponent<ParticleSystem>();
@@ -38,6 +51,8 @@ public class CloudController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (!painted) Paint();
+
         this.transform.Translate(0, 0, speed);
 
         if (Vector3.Distance(this.transform.position, startPos) > dst) Spawn();
