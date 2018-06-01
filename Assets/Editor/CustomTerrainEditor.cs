@@ -105,8 +105,10 @@ public class CustomTerrainEditor : Editor {
     SerializedProperty numClouds;
     // The amount of particles we will use for cloud gen
     SerializedProperty particlesPerCloud;
-    // The scale we will use for cloud gen
-    SerializedProperty cloudScale;
+    // The min scale we will use for cloud gen
+    SerializedProperty cloudScaleMin;
+    // The max scale we will use for cloud gen
+    SerializedProperty cloudScaleMax;
     // The material we will use for cloud gen
     SerializedProperty cloudMat;
     // The material we will use for cloud shadow gen
@@ -238,7 +240,8 @@ public class CustomTerrainEditor : Editor {
 
         numClouds = serializedObject.FindProperty("numClouds");
         particlesPerCloud = serializedObject.FindProperty("particlesPerCloud");
-        cloudScale = serializedObject.FindProperty("cloudScale");
+        cloudScaleMin = serializedObject.FindProperty("cloudScaleMin");
+        cloudScaleMax = serializedObject.FindProperty("cloudScaleMax");
         cloudMat = serializedObject.FindProperty("cloudMat");
         cloudShadowMat = serializedObject.FindProperty("cloudShadowMat");
         cloudColor = serializedObject.FindProperty("cloudColor");
@@ -449,7 +452,8 @@ public class CustomTerrainEditor : Editor {
 
             EditorGUILayout.PropertyField(numClouds, new GUIContent("Number of Clouds"));
             EditorGUILayout.PropertyField(particlesPerCloud, new GUIContent("Particles Per Cloud"));
-            EditorGUILayout.PropertyField(cloudScale, new GUIContent("Size"));
+            EditorGUILayout.PropertyField(cloudScaleMin, new GUIContent("Cloud Min Size"));
+            EditorGUILayout.PropertyField(cloudScaleMax, new GUIContent("Cloud max Size"));
             EditorGUILayout.PropertyField(cloudMat, true);
             EditorGUILayout.PropertyField(cloudShadowMat, true);
             EditorGUILayout.PropertyField(cloudColor, new GUIContent("Color"));

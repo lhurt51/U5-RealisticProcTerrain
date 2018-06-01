@@ -173,7 +173,8 @@ public class CustomTerrain : MonoBehaviour {
     // Clouds ------------------------------------------------------
     public int numClouds = 1;
     public int particlesPerCloud = 50;
-    public Vector3 cloudScale = new Vector3(1.0f, 1.0f, 1.0f);
+    public Vector3 cloudScaleMin = new Vector3(1.0f, 1.0f, 1.0f);
+    public Vector3 cloudScaleMax = new Vector3(1.0f, 1.0f, 1.0f);
     public Material cloudMat;
     public Material cloudShadowMat;
     public Color cloudColor = Color.white;
@@ -259,6 +260,7 @@ public class CustomTerrain : MonoBehaviour {
         AddTag(tagsProp, "Cloud", TagType.Tag);
         AddTag(tagsProp, "Shore", TagType.Tag);
 
+        AddTag(layerProp, "Sky", TagType.Layer);
         terrainLayer = AddTag(layerProp, "Terrain", TagType.Layer);
 
         // Apply tag changes to the tag database
@@ -847,10 +849,10 @@ public class CustomTerrain : MonoBehaviour {
                     if (heightMap[x, y] < waterHeight && heightMap[(int)n.x, (int)n.y] > waterHeight)
                     {
                         GameObject go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                        go.transform.localScale *= 25.0f;
                         go.transform.position = this.transform.position + new Vector3(y / (float)terrainData.heightmapHeight * terrainData.size.z, waterHeight * terrainData.size.y, x / (float)terrainData.heightmapWidth * terrainData.size.x);
                         go.transform.LookAt(new Vector3(n.y / (float)terrainData.heightmapHeight * terrainData.size.z, waterHeight * terrainData.size.y, n.x / (float)terrainData.heightmapWidth * terrainData.size.x));
                         go.transform.Rotate(90.0f, 0.0f, 0.0f);
-                        go.transform.localScale *= 25.0f;
                         go.tag = "Shore";
                     }
                 }
@@ -860,10 +862,7 @@ public class CustomTerrain : MonoBehaviour {
         GameObject[] shoreQuads = GameObject.FindGameObjectsWithTag("Shore");
         MeshFilter[] meshFilters = new MeshFilter[shoreQuads.Length];
 
-        for (int m = 0; m < shoreQuads.Length; m++)
-        {
-            meshFilters[m] = shoreQuads[m].GetComponent<MeshFilter>();
-        }
+        for (int m = 0; m < shoreQuads.Length; m++) meshFilters[m] = shoreQuads[m].GetComponent<MeshFilter>();
 
         int i = 0;
         CombineInstance[] combine = new CombineInstance[meshFilters.Length];
@@ -872,7 +871,7 @@ public class CustomTerrain : MonoBehaviour {
         {
             combine[i].mesh = meshFilters[i].sharedMesh;
             combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-            meshFilters[i].gameObject.active = false;
+            meshFilters[i].gameObject.SetActive(false);
             i++;
         }
 
@@ -882,6 +881,7 @@ public class CustomTerrain : MonoBehaviour {
 
         GameObject shoreLine = new GameObject();
         shoreLine.name = "ShoreLine";
+        shoreLine.layer = LayerMask.NameToLayer("Water");
         shoreLine.AddComponent<WaveAnimation>();
         shoreLine.transform.position = this.transform.position;
         shoreLine.transform.rotation = this.transform.rotation;
@@ -1083,6 +1083,7 @@ public class CustomTerrain : MonoBehaviour {
             cloudGO.transform.position = cloudManager.transform.position;
             cloudGO.transform.parent = cloudManager.transform;
             cloudGO.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            cloudGO.layer = LayerMask.NameToLayer("Sky");
 
             cc.color = cloudColor;
             cc.lining = cloudLining;
@@ -1107,7 +1108,26 @@ public class CustomTerrain : MonoBehaviour {
 
             var shape = cloudSystem.shape;
             shape.shapeType = ParticleSystemShapeType.Sphere;
-            shape.scale = new Vector3(cloudScale.x, cloudScale.y, cloudScale.z);
+            shape.scale = new Vector3(UnityEngine.Random.Range(cloudScaleMin.x, cloudScaleMax.x), UnityEngine.Random.Range(cloudScaleMin.y, cloudScaleMax.y), UnityEngine.Random.Range(cloudScaleMin.z, cloudScaleMax.z));
+
+            if (UnityEngine.Random.Range(0, 10) < 6)
+            {
+                GameObject cloudProjector = new GameObject();
+                Projector cp = cloudProjector.AddComponent<Projector>();
+                int skyLayerMask = 1 << LayerMask.NameToLayer("Sky");
+                int waterLayerMask = 1 << LayerMask.NameToLayer("Water");
+
+                cloudProjector.name = "Shadow";
+                cloudProjector.transform.position = cloudGO.transform.position;
+                cloudProjector.transform.forward = Vector3.down;
+                cloudProjector.transform.parent = cloudGO.transform;
+
+                cp.material = cloudShadowMat;
+                cp.material.mainTextureScale = new Vector2(shape.scale.x, shape.scale.z);
+                cp.farClipPlane = terrainData.size.y;
+                cp.ignoreLayers = skyLayerMask | waterLayerMask;
+                cp.fieldOfView = 20.0f;
+            }
         }
     }
 
