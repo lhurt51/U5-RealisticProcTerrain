@@ -1079,6 +1079,17 @@ public class CustomTerrain : MonoBehaviour {
 
             cloudGO.name = "Cloud" + c;
             cloudGO.tag = "Cloud";
+            cloudGO.transform.rotation = cloudManager.transform.rotation;
+            cloudGO.transform.position = cloudManager.transform.position;
+            cloudGO.transform.parent = cloudManager.transform;
+            cloudGO.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+
+            cc.color = cloudColor;
+            cc.lining = cloudLining;
+            cc.numOfParticles = particlesPerCloud;
+            cc.minSpeed = cloudMinSpeed;
+            cc.maxSpeed = cloudMaxSpeed;
+            cc.dst = cloudRange;
 
             cloudRend.material = cloudMat;
             cloudRend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -1097,11 +1108,6 @@ public class CustomTerrain : MonoBehaviour {
             var shape = cloudSystem.shape;
             shape.shapeType = ParticleSystemShapeType.Sphere;
             shape.scale = new Vector3(cloudScale.x, cloudScale.y, cloudScale.z);
-
-            cloudGO.transform.rotation = cloudManager.transform.rotation;
-            cloudGO.transform.position = cloudManager.transform.position;
-            cloudGO.transform.parent = cloudManager.transform;
-            cloudGO.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         }
     }
 
