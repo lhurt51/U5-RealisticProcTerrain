@@ -30,6 +30,11 @@ public class CustomTerrainEditor : Editor {
     // The height scale for the perlin map
     SerializedProperty perlinHeightScale;
 
+    // The table for our perlin paramters to display the parameters
+    GUITableState perlinParameterTable;
+    // The perlin parameters list that we want to display
+    SerializedProperty perlinParameters;
+
     // The count for how many peak will be generated
     SerializedProperty voronoiPeaks;
     // The min height for each voronoi peak
@@ -50,11 +55,6 @@ public class CustomTerrainEditor : Editor {
     // The height dampener to reduce height over time
     SerializedProperty MPDHeightDampenerPower;
     SerializedProperty MPDRoughness;
-
-    // The table for our perlin paramters to display the parameters
-    GUITableState perlinParameterTable;
-    // The perlin parameters list that we want to display
-    SerializedProperty perlinParameters;
 
     // The table for our splat heights to display parameters
     GUITableState splatMapTable;
@@ -170,7 +170,7 @@ public class CustomTerrainEditor : Editor {
 
     private void RefreshHeightMapDisplay(CustomTerrain terrain)
     {
-        float[,] heightMap = terrain.GetHeightMap();
+        float[,] heightMap = terrain.HeightMap;
 
         for (int y = 0; y < terrain.terrainData.heightmapHeight; y++)
         {

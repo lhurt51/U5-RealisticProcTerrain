@@ -10,6 +10,14 @@ public class CustomTerrain : MonoBehaviour {
     public Terrain terrain;
     public TerrainData terrainData;
 
+    public float[,] HeightMap
+    {
+        // Getting the original height map with no variations
+        get { return terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight); }
+        // Applying the height map to the terrain at position (0, 0)
+        set { terrainData.SetHeights(0, 0, value); }
+    }
+
     // Random Generation --------------------------------------------
     public Vector2 randomHeightRange = new Vector2(0.0f, 0.1f);
 
@@ -327,7 +335,7 @@ public class CustomTerrain : MonoBehaviour {
 
     private void Smooth(int thisSmoothAmount)
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = HeightMap;
         float smoothProgress = 0;
         EditorUtility.DisplayProgressBar("Smoothing Terrain", "Progress", smoothProgress);
 
@@ -351,7 +359,7 @@ public class CustomTerrain : MonoBehaviour {
             smoothProgress++;
             EditorUtility.DisplayProgressBar("Smoothing Terrain", "Progress", smoothProgress / thisSmoothAmount);
         }
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
         EditorUtility.ClearProgressBar();
     }
 
@@ -400,11 +408,6 @@ public class CustomTerrain : MonoBehaviour {
     }
 
     // Public Class Methods ------------------------------------------
-    public float[,] GetHeightMap()
-    {
-        return terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight);
-    }
-
     public void RandomTerrain()
     {
         float[,] heightMap = GetHeightMapChoice();
@@ -416,8 +419,7 @@ public class CustomTerrain : MonoBehaviour {
                 heightMap[x, y] += UnityEngine.Random.Range(randomHeightRange.x, randomHeightRange.y);
             }
         }
-        // Applying the height map to the terrain at position (0, 0)
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 
     public void LoadTexture()
@@ -431,8 +433,7 @@ public class CustomTerrain : MonoBehaviour {
                 heightMap[x, z] += heightMapImage.GetPixel((int)(x * heightMapScale.x), (int)(z * heightMapScale.z)).grayscale * heightMapScale.y;
             }
         }
-        // Applying the height map to the terrain at position (0, 0)
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 
     public void Perlin()
@@ -446,8 +447,7 @@ public class CustomTerrain : MonoBehaviour {
                 heightMap[x, y] += Utils.fBM((x + perlinOffsetX) * perlinXScale, (y + perlinOffsetY) * perlinYScale, perlinOctaves, perlinPersistance) * perlinHeightScale;
             }
         }
-        // Applying the height map to the terrain at position (0, 0)
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 
     public void AddNewPerlin()
@@ -483,7 +483,7 @@ public class CustomTerrain : MonoBehaviour {
                 }
             }
         }
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 
     public void Voronoi()
@@ -523,8 +523,7 @@ public class CustomTerrain : MonoBehaviour {
                 }
             }
         }
-
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 
     public void MPD()
@@ -588,8 +587,7 @@ public class CustomTerrain : MonoBehaviour {
             heightMin *= heightDampener;
             heightMax *= heightDampener;
         }
-
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 
     public void SmoothTerrain()
@@ -632,7 +630,7 @@ public class CustomTerrain : MonoBehaviour {
         }
         terrainData.splatPrototypes = newSplatProto;
 
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = HeightMap;
         float[,,] splatMapData = new float[terrainData.alphamapWidth, terrainData.alphamapHeight, terrainData.alphamapLayers];
 
         for (int y = 0; y < terrainData.alphamapHeight; y++)
@@ -792,7 +790,7 @@ public class CustomTerrain : MonoBehaviour {
         }
         terrainData.detailPrototypes = newDetailPrototypes;
 
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = HeightMap;
 
         for (int i = 0; i < terrainData.detailPrototypes.Length; i++)
         {
@@ -834,7 +832,7 @@ public class CustomTerrain : MonoBehaviour {
 
     public void DrawShoreLine()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = HeightMap;
 
         for (int y = 0; y < terrainData.heightmapHeight; y++)
         {
@@ -898,19 +896,18 @@ public class CustomTerrain : MonoBehaviour {
 
     public void Rain()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = HeightMap;
 
         for (int i = 0; i < erosionDroplets; i++)
         {
             heightMap[UnityEngine.Random.Range(0, terrainData.heightmapWidth), UnityEngine.Random.Range(0, terrainData.heightmapHeight)] -= erosionStrength;
         }
-
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 
     public void Tidal()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = HeightMap;
 
         for (int y = 0; y < terrainData.heightmapHeight; y++)
         {
@@ -929,12 +926,12 @@ public class CustomTerrain : MonoBehaviour {
                 }
             }
         }
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 
     public void Thermal()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = HeightMap;
 
         for (int y = 0; y < terrainData.heightmapHeight; y++)
         {
@@ -955,12 +952,12 @@ public class CustomTerrain : MonoBehaviour {
                 }
             }
         }
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 
     public void River()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = HeightMap;
         float[,] erosionMap = new float[terrainData.heightmapWidth, terrainData.heightmapHeight];
 
         for (int i = 0; i < erosionDroplets; i++)
@@ -981,12 +978,12 @@ public class CustomTerrain : MonoBehaviour {
                 if (erosionMap[x, y] > 0.0f) heightMap[x, y] -= erosionMap[x, y];
             }
         }
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 
     public void Wind()
     {
-        float[,] heightMap = GetHeightMap();
+        float[,] heightMap = HeightMap;
         int width = terrainData.heightmapWidth;
         int height = terrainData.heightmapHeight;
         float WindDir = 30;
@@ -1015,7 +1012,7 @@ public class CustomTerrain : MonoBehaviour {
                 }
             }
         }
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 
     public void Canyon()
@@ -1026,14 +1023,14 @@ public class CustomTerrain : MonoBehaviour {
         int cx = 1;
         int cy = UnityEngine.Random.Range(10, terrainData.heightmapHeight - 10);
 
-        tempHeightMap = GetHeightMap();
+        tempHeightMap = HeightMap;
         while (cy >= 0 && cy < terrainData.heightmapHeight && cx > 0 && cx < terrainData.heightmapWidth)
         {
             CanyonCrawler(cx, cy, tempHeightMap[cx, cy] - digDepth, bankSlope, maxDepth);
             cx += UnityEngine.Random.Range(1, 3);
             cy += UnityEngine.Random.Range(-2, 3); 
         }
-        terrainData.SetHeights(0, 0, tempHeightMap);
+        HeightMap = tempHeightMap;
     }
 
     public void Erode()
@@ -1142,7 +1139,6 @@ public class CustomTerrain : MonoBehaviour {
                 heightMap[x, y] = 0.0f;
             }
         }
-        // Applying the height map to the terrain at position (0, 0)
-        terrainData.SetHeights(0, 0, heightMap);
+        HeightMap = heightMap;
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class Utils {
 
-	public static float fBM(float x, float y, int oct, float perscistance)
+	public static float fBM(float x, float y, int oct, float perscistance, float lacunarity = 2.0f)
     {
         // Total heigth value
         float total = 0;
@@ -24,7 +24,7 @@ public static class Utils {
             // Increasing amplitude by persistance (to reduce the amplitude every octave)
             amplitude *= perscistance;
             // Increasing the frequency by 2 (to randomize the seed of smaller noises)
-            frequency *= 2;
+            frequency *= lacunarity;
         }
 
         // Avg of the total to keep it within range

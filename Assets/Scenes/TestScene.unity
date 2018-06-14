@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -566,10 +566,10 @@ MonoBehaviour:
   waterHeight: 0.075
   waterGO: {fileID: 100000, guid: 780611a67e8e941a2b3aa96e5915a793, type: 2}
   shoreLineMat: {fileID: 2100000, guid: 3ed45e0389f2ac04bb11201b88fa4aa4, type: 2}
-  erosionType: 1
+  erosionType: 0
   erosionStrength: 0.7
-  erosionAmount: 0.5
-  erosionSolubility: 0.4
+  erosionAmount: 0.714
+  erosionSolubility: 0.467
   erosionDroplets: 20
   erosionsRiverSprings: 5
   erosionSmoothAmount: 0
@@ -586,7 +586,7 @@ MonoBehaviour:
   cloudMaxSpeed: 0.5
   cloudRange: 500
   smoothAmount: 7
-  resetBeforeGen: 1
+  resetBeforeGen: 0
   terrainLayer: 9
 --- !u!1 &1631316442
 GameObject:
