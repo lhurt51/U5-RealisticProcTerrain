@@ -1107,7 +1107,7 @@ public class CustomTerrain : MonoBehaviour {
             shape.shapeType = ParticleSystemShapeType.Sphere;
             shape.scale = new Vector3(UnityEngine.Random.Range(cloudScaleMin.x, cloudScaleMax.x), UnityEngine.Random.Range(cloudScaleMin.y, cloudScaleMax.y), UnityEngine.Random.Range(cloudScaleMin.z, cloudScaleMax.z));
 
-            if (UnityEngine.Random.Range(0, 10) < 6)
+            if (UnityEngine.Random.Range(0, 10) < 7.5)
             {
                 GameObject cloudProjector = new GameObject();
                 Projector cp = cloudProjector.AddComponent<Projector>();
