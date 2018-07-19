@@ -49,9 +49,56 @@ public class MaterialGradientEditor : EditorWindow {
         }
     }
 
+    // Need a way to update both the min and max height through keys
     private void Draw()
     {
+        gradPrevRect = new Rect(borderSize, borderSize, position.width - borderSize * 2, 25);
+        GUI.DrawTexture(gradPrevRect, gradient.GetTexture((int)gradPrevRect.width));
+        matRects = new Rect[gradient.NumMats];
+        for (int i = 0; i < gradient.NumMats; i++)
+        {
+            MaterialLevel.MatLevel mat = gradient.GetMatLevel(i);
+            matRects matRect = new Rect(gradPrevRect.x + gradPrevRect.width * mat.MinHeight - keyWidth / 2.0f, gradPrevRect.yMax + borderSize, keyWidth, keyHeight);
 
+            if (i == selectedKeyIndex)
+                EditorGUI.DrawRect(new Rect(matRect.x - 2, matRect.y - 2, matRect.width + 4, matRect.height + 4), Color.black);
+            EditorGUI.DrawRect(matRect, mat.Tint);
+            matRects[i] = matRect;
+        }
+
+        matRects settingsRect = new Rects(borderSize, matRects[0].yMax + borderSize, position.width - borderSize * 2, position.height - borderSize);
+        GUILayouts.BeginArea(settingsRect);
+
+        EditorGUI.BeginChangeCheck();
+
+        Texture2D newText = (Texture2D)EditorGUILayout.ObjectField("Texture", gradient.GetMatLevel(selectedKeyIndex).Texture, typeof(Texture2D), false);
+        Color newTint = EditorGUILayout.ColorField(gradient.GetMatLevel(selectedKeyIndex).Tint);
+        float newTintStrength = EditorGUILayout.Slider("Tint Strength", gradient.GetMatLevel(selectedKeyIndex).TintStrength, 0.0f, 1.0f);
+        float newMinSlope = EditorGUILayout.Slider("Min Slope", gradient.GetMatLevel(selectedKeyIndex).MinSlope, 0.0f, 90.0f);
+        float newMaxSlope = EditorGUILayout.Slider("Max Slope", gradient.GetMatLevel(selectedKeyIndex).MaxSlope, 0.0f, 90.0f);
+        float newBlendStrength = EditorGUILayout.Slider("Blend Strength", gradient.GetMatLevel(selectedKeyIndex).BlendStrength, 0.0f, 1.0f);
+        Vector2 newTileOffset = (Vector2)EditorGUILayout.ObjectField("Tex Offset", gradient.GetMatLevel(selectedKeyIndex).TileOffset, typeof(Vector2), false);
+        Vector2 newTileScale = (Vector2)EditorGUILayout.ObjectField("Tex Scale", gradient.GetMatLevel(selectedKeyIndex).TileScale, typeof(Vector2), false);
+        Vector2 newSplatNoiseVScale = (Vector2)EditorGUILayout.ObjectField("Blend Noise Vector Scale", gradient.GetMatLevel(selectedKeyIndex).SplatNoiseVScale, typeof(Vector2), false);
+        float newSplatNoiseScaler = (float)EditorGUILayout.ObjectField("Blend Noise Scaler", gradient.GetMatLevel(selectedKeyIndex).SplatNoiseScaler, typeof(float), false);
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            gradient.UpdateMatTexture(selectedKeyIndex, newText);
+            gradient.UpdateMatTint(selectedKeyIndex, newTint);
+            gradient.UpdateMatTintStrength(selectedKeyIndex, newTintStrength);
+            gradient.UpdateMatMinSlope(selectedKeyIndex, newMinSlope);
+            gradient.UpdateMatMaxSlope(selectedKeyIndex, newMaxSlope);
+            gradient.UpdateMatBlendStrength(selectedKeyIndex, newBlendStrength);
+            gradient.UpdateMatTileOffset(selectedKeyIndex, newTileOffset);
+            gradient.UpdateMatTileScale(selectedKeyIndex, newTileScale);
+            gradient.UpdateMatSplatNoiseVScale(selectedKeyIndex, newSplatNoiseVScale);
+            gradient.UpdateMatSplatNoiseScaler(selectedKeyIndex, newSplatNoiseScaler);
+        }
+
+        gradient.bRandomizeTint = EditorGUILayout.Toggle("Randomize Tint", gradient.bRandomizeTint);
+
+        GUILayout.EndArea();
     }
 
     private void HandleInput()
