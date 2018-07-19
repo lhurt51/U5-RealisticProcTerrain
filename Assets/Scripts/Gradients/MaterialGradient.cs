@@ -257,5 +257,48 @@ public class MaterialGradient {
         if (mats[i] != null) mats[i].SplatNoiseScaler = splatNoiseScaler;
     }
 
-    
+    // Need to work on this eval for the gradient more!
+    public Color Eval(float height)
+    {
+        Color color = Color.clear;
+        List<Color> keysColor = new List<Color>();
+        List<float> keyStrength = new List<float>();
+
+        for (int i = 0; i < NumMats; i++)
+        {
+            if (mats[i].MinHeight < height && mats[i].MaxHeight > height)
+            {
+                keysColor.Add(mats[i].Tint);
+                keyStrength.Add(Utils.Map(height, mats[i].MinHeight, mats[i].MaxHeight, -1, 1));
+            }
+        }
+
+        if (keysColor.Count > 1)
+        {
+            for (int i = 0; i < keysColor.Count - 1; i++)
+            {
+                if (keysColor[i + 1] != null)
+                {
+                    float strength = keyStrength[i] + keyStrength[i + 1];
+                    color = Color.Lerp((i == 0) ? keysColor[i] : color, keysColor[i + 1], strength);
+                }
+            }
+        }
+        else color = keysColor[0];
+
+        return color;
+    }
+
+    public Texture2D GetTexture(int width)
+    {
+        Texture2D texture = new Texture2D(width, 1);
+        Color[] colors = new Color[width];
+
+        for (int i = 0; i < width; i++) colors[i] = Eval((float)i / (width - 1));
+
+        texture.SetPixels(colors);
+        texture.Apply();
+
+        return texture;
+    }
 }
