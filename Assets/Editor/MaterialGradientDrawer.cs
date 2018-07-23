@@ -30,6 +30,9 @@ public class MaterialGradientDrawer : PropertyDrawer {
         else if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0 && textRect.Contains(guiEvent.mousePosition))
         {
             // Open the window when clicked on
+            MaterialGradientEditor window = EditorWindow.GetWindow<MaterialGradientEditor>();
+
+            window.Gradient = grad;
         }
     }
 

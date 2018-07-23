@@ -57,8 +57,8 @@ public class MaterialGradientEditor : EditorWindow {
         matRects = new Rect[gradient.NumMats];
         for (int i = 0; i < gradient.NumMats; i++)
         {
-            MaterialLevel.MatLevel mat = gradient.GetMatLevel(i);
-            matRects matRect = new Rect(gradPrevRect.x + gradPrevRect.width * mat.MinHeight - keyWidth / 2.0f, gradPrevRect.yMax + borderSize, keyWidth, keyHeight);
+            MaterialGradient.MaterialLevel mat = gradient.GetMatLevel(i);
+            Rect matRect = new Rect(gradPrevRect.x + gradPrevRect.width * mat.MinHeight - keyWidth / 2.0f, gradPrevRect.yMax + borderSize, keyWidth, keyHeight);
 
             if (i == selectedKeyIndex)
                 EditorGUI.DrawRect(new Rect(matRect.x - 2, matRect.y - 2, matRect.width + 4, matRect.height + 4), Color.black);
@@ -66,8 +66,8 @@ public class MaterialGradientEditor : EditorWindow {
             matRects[i] = matRect;
         }
 
-        matRects settingsRect = new Rects(borderSize, matRects[0].yMax + borderSize, position.width - borderSize * 2, position.height - borderSize);
-        GUILayouts.BeginArea(settingsRect);
+        Rect settingsRect = new Rect(borderSize, matRects[0].yMax + borderSize, position.width - borderSize * 2, position.height - borderSize);
+        GUILayout.BeginArea(settingsRect);
 
         EditorGUI.BeginChangeCheck();
 
@@ -77,10 +77,10 @@ public class MaterialGradientEditor : EditorWindow {
         float newMinSlope = EditorGUILayout.Slider("Min Slope", gradient.GetMatLevel(selectedKeyIndex).MinSlope, 0.0f, 90.0f);
         float newMaxSlope = EditorGUILayout.Slider("Max Slope", gradient.GetMatLevel(selectedKeyIndex).MaxSlope, 0.0f, 90.0f);
         float newBlendStrength = EditorGUILayout.Slider("Blend Strength", gradient.GetMatLevel(selectedKeyIndex).BlendStrength, 0.0f, 1.0f);
-        Vector2 newTileOffset = (Vector2)EditorGUILayout.ObjectField("Tex Offset", gradient.GetMatLevel(selectedKeyIndex).TileOffset, typeof(Vector2), false);
-        Vector2 newTileScale = (Vector2)EditorGUILayout.ObjectField("Tex Scale", gradient.GetMatLevel(selectedKeyIndex).TileScale, typeof(Vector2), false);
-        Vector2 newSplatNoiseVScale = (Vector2)EditorGUILayout.ObjectField("Blend Noise Vector Scale", gradient.GetMatLevel(selectedKeyIndex).SplatNoiseVScale, typeof(Vector2), false);
-        float newSplatNoiseScaler = (float)EditorGUILayout.ObjectField("Blend Noise Scaler", gradient.GetMatLevel(selectedKeyIndex).SplatNoiseScaler, typeof(float), false);
+        Vector2 newTileOffset = EditorGUILayout.Vector2Field("Tex Offset", gradient.GetMatLevel(selectedKeyIndex).TileOffset);
+        Vector2 newTileScale = EditorGUILayout.Vector2Field("Tex Scale", gradient.GetMatLevel(selectedKeyIndex).TileScale);
+        Vector2 newSplatNoiseVScale = EditorGUILayout.Vector2Field("Blend Noise Vector Scale", gradient.GetMatLevel(selectedKeyIndex).SplatNoiseVScale);
+        float newSplatNoiseScaler = EditorGUILayout.FloatField("Blend Noise Scaler", gradient.GetMatLevel(selectedKeyIndex).SplatNoiseScaler);
 
         if (EditorGUI.EndChangeCheck())
         {
@@ -121,7 +121,7 @@ public class MaterialGradientEditor : EditorWindow {
             {
                 float keyTime = Mathf.InverseLerp(gradPrevRect.x, gradPrevRect.xMax, guiEvent.mousePosition.x);
                 Color interpColor = gradient.Eval(keyTime);
-                interpColor randColor = new interpColor(Random.value, Random.value, Random.value);
+                Color randColor = new Color(Random.value, Random.value, Random.value);
 
                 selectedKeyIndex = gradient.AddMat((gradient.bRandomizeTint) ? randColor : interpColor, keyTime);
                 mouseIsOverKey = true;
