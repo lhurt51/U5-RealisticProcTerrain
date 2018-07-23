@@ -95,7 +95,6 @@ public class MaterialGradientEditor : EditorWindow {
             gradient.UpdateMatSplatNoiseVScale(selectedKeyIndex, newSplatNoiseVScale);
             gradient.UpdateMatSplatNoiseScaler(selectedKeyIndex, newSplatNoiseScaler);
         }
-
         gradient.bRandomizeTint = EditorGUILayout.Toggle("Randomize Tint", gradient.bRandomizeTint);
 
         GUILayout.EndArea();
@@ -103,7 +102,47 @@ public class MaterialGradientEditor : EditorWindow {
 
     private void HandleInput()
     {
+        Event guiEvent = Event.current;
 
+        if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
+        {
+            for (int i = 0; i < matRects.Length; i++)
+            {
+                if (matRects[i].Contains(guiEvent.mousePosition))
+                {
+                    selectedKeyIndex = i;
+                    mouseIsOverKey = true;
+                    shouldRepaint = true;
+                    break;
+                }
+            }
+
+            if (!mouseIsOverKey && matRects.Length < 7)
+            {
+                float keyTime = Mathf.InverseLerp(gradPrevRect.x, gradPrevRect.xMax, guiEvent.mousePosition.x);
+                Color interpColor = gradient.Eval(keyTime);
+                interpColor randColor = new interpColor(Random.value, Random.value, Random.value);
+
+                selectedKeyIndex = gradient.AddMat((gradient.bRandomizeTint) ? randColor : interpColor, keyTime);
+                mouseIsOverKey = true;
+                shouldRepaint = true;
+            }
+            else if (guiEvent.type == EventType.MouseUp && guiEvent.button == 0) mouseIsOverKey = false;
+            else if (mouseIsOverKey && guiEvent.type == EventType.MouseDrag && guiEvent.button == 0)
+            {
+                float keyTime = Mathf.InverseLerp(gradPrevRect.x, gradPrevRect.xMax, guiEvent.mousePosition.x);
+
+                selectedKeyIndex = gradient.UpdateMatMinHeight(selectedKeyIndex, keyTime);
+                shouldRepaint = true;
+            }
+            else if (guiEvent.keyCode == KeyCode.Backspace && guiEvent.type == EventType.KeyDown)
+            {
+                if (selectedKeyIndex >= gradient.NumMats) selectedKeyIndex--;
+                gradient.RemoveMat(selectedKeyIndex);
+                if (selectedKeyIndex >= gradient.NumMats) selectedKeyIndex--;
+                shouldRepaint = true;
+            }
+        }
     }
 
 }
