@@ -127,21 +127,21 @@ public class MaterialGradientEditor : EditorWindow {
                 mouseIsOverKey = true;
                 shouldRepaint = true;
             }
-            else if (guiEvent.type == EventType.MouseUp && guiEvent.button == 0) mouseIsOverKey = false;
-            else if (mouseIsOverKey && guiEvent.type == EventType.MouseDrag && guiEvent.button == 0)
-            {
-                float keyTime = Mathf.InverseLerp(gradPrevRect.x, gradPrevRect.xMax, guiEvent.mousePosition.x);
+        }
+        else if (guiEvent.type == EventType.MouseUp && guiEvent.button == 0) mouseIsOverKey = false;
+        else if (mouseIsOverKey && guiEvent.type == EventType.MouseDrag && guiEvent.button == 0)
+        {
+            float keyTime = Mathf.InverseLerp(gradPrevRect.x, gradPrevRect.xMax, guiEvent.mousePosition.x);
 
-                selectedKeyIndex = gradient.UpdateMatMinHeight(selectedKeyIndex, keyTime);
-                shouldRepaint = true;
-            }
-            else if (guiEvent.keyCode == KeyCode.Backspace && guiEvent.type == EventType.KeyDown)
-            {
-                if (selectedKeyIndex >= gradient.NumMats) selectedKeyIndex--;
-                gradient.RemoveMat(selectedKeyIndex);
-                if (selectedKeyIndex >= gradient.NumMats) selectedKeyIndex--;
-                shouldRepaint = true;
-            }
+            selectedKeyIndex = gradient.UpdateMatMinHeight(selectedKeyIndex, keyTime);
+            shouldRepaint = true;
+        }
+        else if (guiEvent.keyCode == KeyCode.Backspace && guiEvent.type == EventType.KeyDown)
+        {
+            if (selectedKeyIndex >= gradient.NumMats) selectedKeyIndex--;
+            gradient.RemoveMat(selectedKeyIndex);
+            if (selectedKeyIndex >= gradient.NumMats) selectedKeyIndex--;
+            shouldRepaint = true;
         }
     }
 

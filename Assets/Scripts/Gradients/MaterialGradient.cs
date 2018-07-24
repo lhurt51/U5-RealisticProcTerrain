@@ -151,7 +151,6 @@ public class MaterialGradient {
         // Looping through the list looking for its position
         for (int i = 0; i < NumMats; i++)
         {
-            Debug.Log("COPY -- Index: " + i + " Num Mats: " + NumMats);
             if (newMat.MinHeight < mats[i].MinHeight)
             {
                 mats.Insert(i, newMat);
@@ -178,7 +177,6 @@ public class MaterialGradient {
         // Looping through the list looking for its position
         for (int i = 0; i < NumMats; i++)
         {
-            Debug.Log("FULL -- Index: " + i + " Num Mats: " + NumMats);
             if (newMat.MinHeight < mats[i].MinHeight)
             {
                 mats.Insert(i, newMat);
@@ -194,7 +192,6 @@ public class MaterialGradient {
 
     public void RemoveMat(int index, bool bOverride = false)
     {
-        Debug.Log("Index: " + index);
         if (bOverride || mats.Count >= 2) mats.RemoveAt(index);
     }
 
@@ -202,7 +199,6 @@ public class MaterialGradient {
     {
         // MaterialLevel newMat = new MaterialLevel(mats[index].Texture, mats[index].Tint, mats[index].TintStrength, minHeight, mats[index].MaxHeight, mats[index].MinSlope, mats[index].MaxSlope, mats[index].BlendStrength, mats[index].TileOffset, mats[index].TileScale, mats[index].SplatNoiseVScale, mats[index].SplatNoiseScaler);
         MaterialLevel newMat = mats[i];
-        Debug.Log("Update Min Height, Index: " + i);
         newMat.MinHeight = minHeight;
 
         RemoveMat(i, true);
