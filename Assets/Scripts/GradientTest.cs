@@ -5,6 +5,6 @@ using UnityEngine;
 public class GradientTest : MonoBehaviour
 {
 
-    MaterialGradient gradient;
+    public MaterialGradient gradient;
 
 }

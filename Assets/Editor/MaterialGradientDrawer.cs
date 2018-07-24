@@ -22,6 +22,9 @@ public class MaterialGradientDrawer : PropertyDrawer {
             GUIStyle gradStyle = new GUIStyle();
 
             GUI.Label(pos, label);
+            Debug.Log("Num Mats " + grad.NumMats);
+            Debug.Log("Width " + pos.width);
+            // There is an issue with printing the texture
             gradStyle.normal.background = grad.GetTexture((int)pos.width);
             GUI.Label(textRect, GUIContent.none, gradStyle);
 

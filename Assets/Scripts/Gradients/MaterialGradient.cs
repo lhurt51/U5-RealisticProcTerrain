@@ -150,11 +150,14 @@ public class MaterialGradient {
 
         // Looping through the list looking for its position
         for (int i = 0; i < NumMats; i++)
+        {
+            Debug.Log("COPY -- Index: " + i + " Num Mats: " + NumMats);
             if (newMat.MinHeight < mats[i].MinHeight)
             {
                 mats.Insert(i, newMat);
                 return i;
             }
+        }
 
         // If this is the biggest height add to the end
         mats.Add(newMat);
@@ -165,20 +168,23 @@ public class MaterialGradient {
     public int AddMat(Color color, float minHeight, Texture2D text = null, float tintStrength = 1.0f, float maxHeight = 0.0f, float minSlope = 0.0f, float maxSlope = 90.0f, float blendStrength = 0.1f, Vector2 tileOffset = default(Vector2), Vector2 tileScale = default(Vector2), Vector2 splatNoiseVScale = default(Vector2), float splatNoiseScaler = 0.1f)
     {
         // Setting all the parameters if they do not have a value
-        maxHeight = minHeight + 0.1f;
-        tileScale = new Vector2(50.0f, 50.0f);
-        splatNoiseVScale = new Vector2(0.01f, 0.01f);
+        if (maxHeight < minHeight) maxHeight = minHeight + 0.1f;
+        if (tileScale == default(Vector2)) tileScale = new Vector2(50.0f, 50.0f);
+        if (splatNoiseVScale == default(Vector2)) splatNoiseVScale = new Vector2(0.01f, 0.01f);
 
         // Creating a new Material Level
         MaterialLevel newMat = new MaterialLevel(text, color, tintStrength, minHeight, maxHeight, minSlope, maxSlope, blendStrength, tileOffset, tileScale, splatNoiseVScale, splatNoiseScaler);
 
         // Looping through the list looking for its position
         for (int i = 0; i < NumMats; i++)
+        {
+            Debug.Log("FULL -- Index: " + i + " Num Mats: " + NumMats);
             if (newMat.MinHeight < mats[i].MinHeight)
             {
                 mats.Insert(i, newMat);
                 return i;
             }
+        }
 
         // If this is the biggest height add to the end
         mats.Add(newMat);
@@ -188,6 +194,7 @@ public class MaterialGradient {
 
     public void RemoveMat(int index, bool bOverride = false)
     {
+        Debug.Log("Index: " + index);
         if (bOverride || mats.Count >= 2) mats.RemoveAt(index);
     }
 
@@ -195,6 +202,7 @@ public class MaterialGradient {
     {
         // MaterialLevel newMat = new MaterialLevel(mats[index].Texture, mats[index].Tint, mats[index].TintStrength, minHeight, mats[index].MaxHeight, mats[index].MinSlope, mats[index].MaxSlope, mats[index].BlendStrength, mats[index].TileOffset, mats[index].TileScale, mats[index].SplatNoiseVScale, mats[index].SplatNoiseScaler);
         MaterialLevel newMat = mats[i];
+        Debug.Log("Update Min Height, Index: " + i);
         newMat.MinHeight = minHeight;
 
         RemoveMat(i, true);
@@ -264,9 +272,11 @@ public class MaterialGradient {
         List<Color> keysColor = new List<Color>();
         List<float> keyStrength = new List<float>();
 
+        // Need to fix this so that the window will work
         for (int i = 0; i < NumMats; i++)
         {
-            if (mats[i].MinHeight < height && mats[i].MaxHeight > height)
+            Debug.Log("Here?");
+            if (mats[i].MinHeight <= height && mats[i].MaxHeight >= height)
             {
                 keysColor.Add(mats[i].Tint);
                 keyStrength.Add(Utils.Map(height, mats[i].MinHeight, mats[i].MaxHeight, -1, 1));
@@ -301,4 +311,11 @@ public class MaterialGradient {
 
         return texture;
     }
+
+    public MaterialGradient()
+    {
+        AddMat(Color.white, 0.0f);
+        AddMat(Color.black, 1.0f);
+    }
+
 }

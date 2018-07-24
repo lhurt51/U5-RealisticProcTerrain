@@ -57,6 +57,7 @@ public class MaterialGradientEditor : EditorWindow {
         matRects = new Rect[gradient.NumMats];
         for (int i = 0; i < gradient.NumMats; i++)
         {
+            Debug.Log("Num Mats & Index: " + gradient.NumMats + " " + i);
             MaterialGradient.MaterialLevel mat = gradient.GetMatLevel(i);
             Rect matRect = new Rect(gradPrevRect.x + gradPrevRect.width * mat.MinHeight - keyWidth / 2.0f, gradPrevRect.yMax + borderSize, keyWidth, keyHeight);
 
