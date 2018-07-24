@@ -28,8 +28,8 @@ public class MaterialGradientEditor : EditorWindow {
     {
         titleContent.text = "Materials Gradient Editor";
         position.Set(position.x, position.y, 400, 250);
-        minSize = new Vector2(200, 250);
-        maxSize = new Vector2(1920, 250);
+        minSize = new Vector2(200, 500);
+        maxSize = new Vector2(1920, 500);
     }
 
     private void OnDisable()
@@ -57,7 +57,6 @@ public class MaterialGradientEditor : EditorWindow {
         matRects = new Rect[gradient.NumMats];
         for (int i = 0; i < gradient.NumMats; i++)
         {
-            Debug.Log("Num Mats & Index: " + gradient.NumMats + " " + i);
             MaterialGradient.MaterialLevel mat = gradient.GetMatLevel(i);
             Rect matRect = new Rect(gradPrevRect.x + gradPrevRect.width * mat.MinHeight - keyWidth / 2.0f, gradPrevRect.yMax + borderSize, keyWidth, keyHeight);
 

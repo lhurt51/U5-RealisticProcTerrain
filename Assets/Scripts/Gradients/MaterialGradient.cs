@@ -268,14 +268,13 @@ public class MaterialGradient {
     // Need to work on this eval for the gradient more!
     public Color Eval(float height)
     {
-        Color color = Color.clear;
+        Color color = Color.white;
         List<Color> keysColor = new List<Color>();
         List<float> keyStrength = new List<float>();
 
         // Need to fix this so that the window will work
         for (int i = 0; i < NumMats; i++)
         {
-            Debug.Log("Here?");
             if (mats[i].MinHeight <= height && mats[i].MaxHeight >= height)
             {
                 keysColor.Add(mats[i].Tint);
@@ -294,7 +293,8 @@ public class MaterialGradient {
                 }
             }
         }
-        else color = keysColor[0];
+        else if (keysColor.Count == 1) color = keysColor[0];
+        else color = mats[0].Tint;
 
         return color;
     }
