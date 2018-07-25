@@ -284,13 +284,13 @@ public class MaterialGradient {
             {
                 if (keysColor[i + 1] != null)
                 {
-                    float strength = keyStrength[i] + keyStrength[i + 1];
-                    color = Color.Lerp((i == 0) ? keysColor[i] : color, keysColor[i + 1], strength);
+                    float strength = Mathf.Abs(keyStrength[i + 1] + keyStrength[i]);
+                    color = Color.Lerp(keysColor[i + 1], (i == 0) ? keysColor[i] : color, strength);
                 }
             }
         }
         else if (keysColor.Count == 1) color = keysColor[0];
-        else color = mats[0].Tint;
+        else color = Color.black;
 
         return color;
     }
