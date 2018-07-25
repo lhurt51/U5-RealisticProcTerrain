@@ -302,10 +302,10 @@ MonoBehaviour:
       splatNoiseVScale: {x: 0.01, y: 0.01}
       splatNoiseScaler: 0.1
     - texture: {fileID: 0}
-      tint: {r: 0.77254903, g: 0.7117181, b: 0.28235298, a: 1}
+      tint: {r: 0.29309765, g: 0.6660413, b: 0.45373982, a: 1}
       tintStrength: 1
-      minHeight: 0.45060658
-      maxHeight: 0.5506066
+      minHeight: 0.102253035
+      maxHeight: 0.4206239
       minSlope: 0
       maxSlope: 90
       blendStrength: 0.1
@@ -316,7 +316,7 @@ MonoBehaviour:
     - texture: {fileID: 0}
       tint: {r: 0.13501245, g: 0.24258912, b: 0.6981132, a: 1}
       tintStrength: 1
-      minHeight: 0.5979203
+      minHeight: 0.29116118
       maxHeight: 0.6979203
       minSlope: 0
       maxSlope: 90
@@ -328,7 +328,7 @@ MonoBehaviour:
     - texture: {fileID: 0}
       tint: {r: 1, g: 0, b: 0.99501085, a: 1}
       tintStrength: 1
-      minHeight: 0.65337956
+      minHeight: 0.3760832
       maxHeight: 0.7533796
       minSlope: 0
       maxSlope: 90
