@@ -113,6 +113,97 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &102164004
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 102164006}
+  - component: {fileID: 102164005}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &102164005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 102164004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1289fcbf81a12c44ba404c346e7f70c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gradient:
+    bRandomizeTint: 1
+    mats:
+    - texture: {fileID: 0}
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      tintStrength: 1
+      minHeight: 0.007452339
+      maxHeight: 0.10745234
+      minSlope: 0
+      maxSlope: 90
+      blendStrength: 0.1
+      tileOffset: {x: 0, y: 0}
+      tileScale: {x: 50, y: 50}
+      splatNoiseVScale: {x: 0.01, y: 0.01}
+      splatNoiseScaler: 0.1
+    - texture: {fileID: 0}
+      tint: {r: 0.4399925, g: 0.5381337, b: 0.010213853, a: 1}
+      tintStrength: 0.22
+      minHeight: 0.22530329
+      maxHeight: 0.627383
+      minSlope: 0
+      maxSlope: 90
+      blendStrength: 0.1
+      tileOffset: {x: 0, y: 0}
+      tileScale: {x: 50, y: 50}
+      splatNoiseVScale: {x: 0.01, y: 0.01}
+      splatNoiseScaler: 0.1
+    - texture: {fileID: 0}
+      tint: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      tintStrength: 1
+      minHeight: 0.5303293
+      maxHeight: 1
+      minSlope: 0
+      maxSlope: 90
+      blendStrength: 0.1
+      tileOffset: {x: 0, y: 0}
+      tileScale: {x: 50, y: 50}
+      splatNoiseVScale: {x: 0.01, y: 0.01}
+      splatNoiseScaler: 0.1
+    - texture: {fileID: 0}
+      tint: {r: 0.3468608, g: 0.003201366, b: 0.50279886, a: 1}
+      tintStrength: 1
+      minHeight: 0.57885617
+      maxHeight: 0.67071056
+      minSlope: 0
+      maxSlope: 90
+      blendStrength: 0.1
+      tileOffset: {x: 0, y: 0}
+      tileScale: {x: 50, y: 50}
+      splatNoiseVScale: {x: 0.01, y: 0.01}
+      splatNoiseScaler: 0.1
+--- !u!4 &102164006
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 102164004}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 280.6954, y: 29.117252, z: 300.0308}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &632470503
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,133 +350,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &1268951064
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1268951066}
-  - component: {fileID: 1268951065}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1268951065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1268951064}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1289fcbf81a12c44ba404c346e7f70c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gradient:
-    bRandomizeTint: 1
-    mats:
-    - texture: {fileID: 0}
-      tint: {r: 0.3915094, g: 1, b: 0.9942202, a: 1}
-      tintStrength: 1
-      minHeight: 0
-      maxHeight: 0.1
-      minSlope: 13.1
-      maxSlope: 90
-      blendStrength: 0.1
-      tileOffset: {x: 0, y: 0}
-      tileScale: {x: 50, y: 50}
-      splatNoiseVScale: {x: 0.01, y: 0.01}
-      splatNoiseScaler: 0.1
-    - texture: {fileID: 0}
-      tint: {r: 0.29309765, g: 0.6660413, b: 0.45373982, a: 1}
-      tintStrength: 1
-      minHeight: 0.102253035
-      maxHeight: 0.4206239
-      minSlope: 0
-      maxSlope: 90
-      blendStrength: 0.1
-      tileOffset: {x: 0, y: 0}
-      tileScale: {x: 50, y: 50}
-      splatNoiseVScale: {x: 0.01, y: 0.01}
-      splatNoiseScaler: 0.1
-    - texture: {fileID: 0}
-      tint: {r: 0.13501245, g: 0.24258912, b: 0.6981132, a: 1}
-      tintStrength: 1
-      minHeight: 0.29116118
-      maxHeight: 0.6979203
-      minSlope: 0
-      maxSlope: 90
-      blendStrength: 0.1
-      tileOffset: {x: 0, y: 0}
-      tileScale: {x: 50, y: 50}
-      splatNoiseVScale: {x: 0.01, y: 0.01}
-      splatNoiseScaler: 0.1
-    - texture: {fileID: 0}
-      tint: {r: 1, g: 0, b: 0.99501085, a: 1}
-      tintStrength: 1
-      minHeight: 0.3760832
-      maxHeight: 0.7533796
-      minSlope: 0
-      maxSlope: 90
-      blendStrength: 0.1
-      tileOffset: {x: 0, y: 0}
-      tileScale: {x: 50, y: 50}
-      splatNoiseVScale: {x: 0.01, y: 0.01}
-      splatNoiseScaler: 0.1
-    - texture: {fileID: 0}
-      tint: {r: 0.72398, g: 0.19624951, b: 0.04218686, a: 1}
-      tintStrength: 1
-      minHeight: 0.7677643
-      maxHeight: 0.8677643
-      minSlope: 70.7
-      maxSlope: 85.7
-      blendStrength: 0.668
-      tileOffset: {x: 0, y: 0}
-      tileScale: {x: 50, y: 50}
-      splatNoiseVScale: {x: 0.01, y: 0.01}
-      splatNoiseScaler: 0.1
-    - texture: {fileID: 0}
-      tint: {r: 0.2971698, g: 1, b: 0.31998232, a: 1}
-      tintStrength: 1
-      minHeight: 0.83015597
-      maxHeight: 0.930156
-      minSlope: 0
-      maxSlope: 90
-      blendStrength: 0.1
-      tileOffset: {x: 0, y: 0}
-      tileScale: {x: 50, y: 50}
-      splatNoiseVScale: {x: 0.01, y: 0.01}
-      splatNoiseScaler: 0.1
-    - texture: {fileID: 0}
-      tint: {r: 0.990566, g: 0.042052314, b: 0.042052314, a: 1}
-      tintStrength: 1
-      minHeight: 1
-      maxHeight: 1.1
-      minSlope: 0
-      maxSlope: 90
-      blendStrength: 0.1
-      tileOffset: {x: 0, y: 0}
-      tileScale: {x: 50, y: 50}
-      splatNoiseVScale: {x: 0.01, y: 0.01}
-      splatNoiseScaler: 0.1
---- !u!4 &1268951066
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1268951064}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 280.6954, y: 29.117252, z: 300.0308}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1799420558
 GameObject:
   m_ObjectHideFlags: 0
