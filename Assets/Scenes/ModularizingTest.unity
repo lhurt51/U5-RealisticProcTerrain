@@ -159,7 +159,7 @@ MonoBehaviour:
       tint: {r: 0.4399925, g: 0.5381337, b: 0.010213853, a: 1}
       tintStrength: 0.22
       minHeight: 0.22530329
-      maxHeight: 0.627383
+      maxHeight: 0.9081456
       minSlope: 0
       maxSlope: 90
       blendStrength: 0.1
@@ -170,7 +170,7 @@ MonoBehaviour:
     - texture: {fileID: 0}
       tint: {r: 0.5, g: 0.5, b: 0.5, a: 1}
       tintStrength: 1
-      minHeight: 0.5303293
+      minHeight: 0.51993066
       maxHeight: 1
       minSlope: 0
       maxSlope: 90
@@ -183,7 +183,7 @@ MonoBehaviour:
       tint: {r: 0.3468608, g: 0.003201366, b: 0.50279886, a: 1}
       tintStrength: 1
       minHeight: 0.57885617
-      maxHeight: 0.67071056
+      maxHeight: 0.71923745
       minSlope: 0
       maxSlope: 90
       blendStrength: 0.1

@@ -116,7 +116,6 @@ public class MaterialGradientEditor : EditorWindow {
                 if (matRects[i].Contains(guiEvent.mousePosition))
                 {
                     selectedKeyIndex = i;
-                    Debug.Log("Selected Index: " + selectedKeyIndex);
                     mouseIsOverKey = true;
                     shouldRepaint = true;
                     break;
