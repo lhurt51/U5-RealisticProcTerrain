@@ -167,7 +167,7 @@ public class MaterialGradient {
     public int AddMat(Color color, float minHeight, Texture2D text = null, float tintStrength = 1.0f, float maxHeight = 0.0f, float minSlope = 0.0f, float maxSlope = 90.0f, float blendStrength = 0.1f, Vector2 tileOffset = default(Vector2), Vector2 tileScale = default(Vector2), Vector2 splatNoiseVScale = default(Vector2), float splatNoiseScaler = 0.1f)
     {
         // Setting all the parameters if they do not have a value
-        if (maxHeight < minHeight) maxHeight = minHeight + 0.1f;
+        if (maxHeight <= minHeight) maxHeight = minHeight + 0.1f;
         if (tileScale == default(Vector2)) tileScale = new Vector2(50.0f, 50.0f);
         if (splatNoiseVScale == default(Vector2)) splatNoiseVScale = new Vector2(0.01f, 0.01f);
 
@@ -199,16 +199,21 @@ public class MaterialGradient {
     {
         // MaterialLevel newMat = new MaterialLevel(mats[index].Texture, mats[index].Tint, mats[index].TintStrength, minHeight, mats[index].MaxHeight, mats[index].MinSlope, mats[index].MaxSlope, mats[index].BlendStrength, mats[index].TileOffset, mats[index].TileScale, mats[index].SplatNoiseVScale, mats[index].SplatNoiseScaler);
         MaterialLevel newMat = mats[i];
-        newMat.MinHeight = minHeight;
 
+        if (newMat != null) newMat.MinHeight = minHeight;
         RemoveMat(i, true);
 
         return AddMat(newMat);
     }
 
-    public void UpdateMatMaxHeight(int i, float maxHeight)
+    public int UpdateMatMaxHeight(int i, float maxHeight)
     {
-        if (mats[i] != null) mats[i].MaxHeight = maxHeight;
+        MaterialLevel newMat = mats[i];
+
+        if (newMat != null) newMat.MaxHeight = maxHeight;
+        RemoveMat(i, true);
+
+        return AddMat(newMat);
     }
 
     public void UpdateMatTexture(int i, Texture2D tex)
@@ -311,7 +316,7 @@ public class MaterialGradient {
     public MaterialGradient()
     {
         AddMat(Color.white, 0.0f);
-        AddMat(Color.black, 1.0f);
+        AddMat(Color.grey, 0.9f);
     }
 
 }
