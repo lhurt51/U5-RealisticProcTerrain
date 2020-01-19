@@ -2,11 +2,11 @@
 
 Contains project files for Unity 5 Realistic Procedural Terrain
 
-	  I wanted to use my knowledge of procedural and a udemy tutorial to create realistic looking procedural landscapes. In 
-    this course, Penny introduces procedural terrain generation techniques using her internationally acclaimed holistic 
-    teaching style and expertise from over 25 years of teaching, research and work in games and computer graphics. Throughout 
-    the course you will follow along with hands-on workshops, designed to teach you the fundamental techniques used for 
-    generating realistic virtual landscapes.
+	I wanted to use my knowledge of procedural and a udemy tutorial to create realistic looking procedural landscapes. 
+	In this course, Penny introduces procedural terrain generation techniques using her internationally acclaimed holistic 
+	teaching style and expertise from over 25 years of teaching, research and work in games and computer graphics. 
+	Throughout the course you will follow along with hands-on workshops, designed to teach you the fundamental techniques 
+	used for generating realistic virtual landscapes.
 
 ![alt text](https://www.udemy.com/staticx/udemy/images/v6/logo-coral.svg)
 
@@ -40,6 +40,6 @@ Sam Pattuzzi's **[Procedural Terrain Generation with Unity](https://www.udemy.co
 
 **Skills Acquired**
 
-	  - Procedural Generation of High quality landmasses
-    - Procedural generation of textures based on slope and hieght
- 	  - Fine tuning the sky and weather effects
+	- Procedural Generation of High quality landmasses
+	- Procedural generation of textures based on slope and hieght
+	- Fine tuning the sky and weather effects
